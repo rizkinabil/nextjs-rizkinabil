@@ -1,87 +1,70 @@
-import ArrowDown from '@/assets/icons/arrow-down.svg';
-import memojiImage from '@/assets/images/memoji-nabil.png';
-import Image from 'next/image';
+'use client';
 
-import SparkleIcon from '@/assets/icons/sparkle.svg';
-import StarIcon from '@/assets/icons/star.svg';
-import grainImage from '@/assets/images/grain.jpg';
-import { HeroOrbit } from '@/components/HeroOrbit';
+import ArrowDown from '@/assets/icons/arrow-down.svg';
+import auroraHero from '@/assets/images/aurora-hero.png';
+import memojiImage from '@/assets/images/memoji-nabil.png';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import Image from 'next/image';
+import { useRef } from 'react';
 
 export const HeroSection = () => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  });
+
+  const skyY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const orbitY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 20]);
+
   return (
-    <div className="py-32 md:py-48 lg:py-60 relative z-0 overflow-x-clip">
-      <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_70%,transparent)]">
-        <div
-          className="absolute inset-0 -z-30 opacity-5"
-          style={{
-            backgroundImage: `url(${grainImage.src})`,
-          }}
-        ></div>
-        <div className="size-[620px] hero-ring"></div>
-        <div className="size-[820px] hero-ring"></div>
-        <div className="size-[1020px] hero-ring"></div>
-        <div className="size-[1220px] hero-ring"></div>
+    <section ref={ref} className="relative overflow-hidden py-28 md:py-40 lg:py-52">
+      {/* BG aurora */}
+      <motion.div className="absolute inset-0 -z-20" style={{ y: skyY }}>
+        <Image src={auroraHero} alt="Aurora background" fill priority className="object-cover" />
+      </motion.div>
 
-        <HeroOrbit size={800} rotation={-72}>
-          <StarIcon className="size-28 text-emerald-300" />
-        </HeroOrbit>
-        <HeroOrbit size={550} rotation={20}>
-          <StarIcon className="size-12 text-emerald-300" />
-        </HeroOrbit>
-        <HeroOrbit size={590} rotation={98}>
-          <StarIcon className="size-8 text-emerald-300" />
-        </HeroOrbit>
-        <HeroOrbit size={430} rotation={-14}>
-          <SparkleIcon className="size-8 text-emerald-300/20" />
-        </HeroOrbit>
-        <HeroOrbit size={440} rotation={79}>
-          <SparkleIcon className="size-5 text-emerald-300/20" />
-        </HeroOrbit>
-        <HeroOrbit size={530} rotation={178}>
-          <SparkleIcon className="size-10 text-emerald-300/20" />
-        </HeroOrbit>
-        <HeroOrbit size={710} rotation={144}>
-          <SparkleIcon className="size-14 text-emerald-300/20" />
-        </HeroOrbit>
-        <HeroOrbit size={720} rotation={85}>
-          <div className="size-3 bg-emerald-300/20 rounded-full"></div>
-        </HeroOrbit>
-        <HeroOrbit size={520} rotation={-41}>
-          <div className="size-2 bg-emerald-300/20 rounded-full"></div>
-        </HeroOrbit>
-        <HeroOrbit size={650} rotation={-5}>
-          <div className="size-2 bg-emerald-300/20 rounded-full"></div>
-        </HeroOrbit>
-      </div>
+      {/* Rings + orbit */}
+      <motion.div
+        className="absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_80%,transparent)]"
+        style={{ y: orbitY }}
+      >
+        <div className="size-[620px] hero-ring" />
+        <div className="size-[820px] hero-ring" />
+        <div className="size-[1020px] hero-ring" />
 
-      <div className="container">
-        <div className="flex flex-col items-center">
-          <Image src={memojiImage} className="size-[100px]" alt="memoji a person working behind a laptop" />
-          <div className="bg-gray-950 border border-gray-800 px-4 py-1.5 inline-flex items-center gap-4 rounded-lg">
-            <div className="animate-pulse bg-green-500 size-2.5 rounded-full"></div>
-            <div className="text-sm font-medium">Available for freelance projects</div>
-          </div>
+        {/* orbit chips / dots di sini */}
+        {/* contoh 2–3 orbit seperti snippet di atas */}
+      </motion.div>
+
+      {/* Content */}
+      <motion.div className="container relative flex flex-col items-center text-center" style={{ y: contentY }}>
+        <Image src={memojiImage} className="size-[100px]" alt="memoji nabil" />
+
+        <div className="bg-gray-950/70 border border-gray-800/70 px-4 py-1.5 inline-flex items-center gap-3 rounded-full mt-4 backdrop-blur">
+          <span className="animate-pulse bg-emerald-400 size-2.5 rounded-full" />
+          <span className="text-sm font-medium text-white/80">Available for freelance projects</span>
         </div>
-        <div className="max-w-lg mx-auto">
-          {/* TODO: find the right wording that fit to my niche */}
-          {/* <h1>Hi, I'm Rizki Nabil Aufa a Software Developer from Indonesia</h1> */}
-          <h1 className="font-serif text-3xl md:text-5xl text-center mt-4">Building Exceptional User Experiences</h1>
-          {/* <h1 className="font-serif text-3xl text-center mt-4">Building User Centric Design Experiences</h1> */}
-          <p className="mt-4 text-center text-white/60 md:text-lg">
-            I specialize in creating user-friendly and visually appealing interfaces for web applications.
+
+        <div className="max-w-xl mt-6">
+          <h1 className="font-serif text-3xl md:text-5xl">Building calm, thoughtful digital experiences.</h1>
+          <p className="mt-4 text-white/70 md:text-lg">
+            I design and develop interfaces that feel as calm as this sky, but still ship fast for real product teams.
           </p>
         </div>
+
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
-          <button className="inline-flex items-center gap-2 border border-white/15 px-6 h-12 rounded-xl">
-            <span className="font-semibold">Explore My Work</span>
+          <button className="inline-flex items-center gap-2 border border-white/20 bg-white/5 hover:bg-white/10 px-6 h-12 rounded-xl text-sm font-semibold">
+            <span>Explore my work</span>
             <ArrowDown className="size-4" />
           </button>
-          <button className="inline-flex items-center gap-2 border border-white bg-white text-gray-900 h-12 px-6 rounded-xl">
+          <button className="inline-flex items-center gap-2 bg-white text-gray-900 h-12 px-6 rounded-xl text-sm font-semibold">
             <span>👋</span>
-            <span className="font-semibold">Let&apos;s Connect</span>
+            <span>Let&apos;s connect</span>
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </section>
   );
 };

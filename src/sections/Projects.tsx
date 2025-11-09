@@ -1,12 +1,12 @@
+import ArrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
 import aiStartupLandingPage from '@/assets/images/ai-startup-landing-page.png';
 import darkSaasLandingPage from '@/assets/images/dark-saas-landing-page.png';
 import lightSaasLandingPage from '@/assets/images/light-saas-landing-page.png';
-import Image from 'next/image';
-
-import ArrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
+import projectsHero from '@/assets/images/projects-hero.png';
 import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from 'lucide-react';
+import Image from 'next/image';
 
 const portfolioProjects: {
   company: string;
@@ -56,14 +56,17 @@ const portfolioProjects: {
 
 export const ProjectsSection = () => {
   return (
-    <section className="pb-16 lg:py-24">
+    <section className="pb-16 lg:py-24 relative">
+      {/* Background Image */}
+      <div className="absolute inset-0 opacity-40 pointer-events-none">
+        <Image src={projectsHero} alt="" fill className="object-cover" priority />
+      </div>
       <div className="container">
         <SectionHeader
           eyeBrow="Featured Projects"
           title="Real-world Results"
           description="See how I transformed concepts into engaging digital experiences."
         />
-
         <div className="flex flex-col mt-10 md:mt-20 gap-20">
           {portfolioProjects.map((project, index) => (
             <Card
