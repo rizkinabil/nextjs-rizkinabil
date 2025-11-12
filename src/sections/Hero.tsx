@@ -7,6 +7,39 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
+type OrbitDotProps = {
+  size: number; // diameter ring (px) — samain dengan hero-ring
+  speed?: number; // durasi putar (detik)
+  delay?: number; // jeda awal (detik)
+  className?: string; // styling ekstra buat dot
+};
+
+const OrbitDot = ({ size, speed = 10, delay = 0, className }: OrbitDotProps) => (
+  <motion.div
+    className="absolute left-1/2 top-1/2"
+    style={{ width: size, height: size }}
+    animate={{ rotate: 360 }}
+    transition={{ repeat: Infinity, ease: 'linear', duration: speed, delay }}
+  >
+    {/* Dot diletakkan di sisi atas lingkaran */}
+    <div className="absolute left-1/2 -translate-x-1/2 -top-1">
+      <div
+        className={'size-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.8)] ' + (className ?? '')}
+      />
+    </div>
+  </motion.div>
+);
+
+/** Optional: efek ping halus dari pusat */
+const CenterPing = () => (
+  <motion.div
+    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-300/20"
+    style={{ width: 8, height: 8 }}
+    animate={{ scale: [1, 8], opacity: [0.6, 0] }}
+    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
+  />
+);
+
 export const HeroSection = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
@@ -19,23 +52,34 @@ export const HeroSection = () => {
   const contentY = useTransform(scrollYProgress, [0, 1], [0, 20]);
 
   return (
-    <section ref={ref} className="relative overflow-hidden py-28 md:py-40 lg:py-52">
+    <section ref={ref} className="relative overflow-hidden py-28 md:py-40 lg:py-52 min-h-screen">
       {/* BG aurora */}
       <motion.div className="absolute inset-0 -z-20" style={{ y: skyY }}>
         <Image src={auroraHero} alt="Aurora background" fill priority className="object-cover" />
       </motion.div>
 
-      {/* Rings + orbit */}
+      {/* Rings + orbit (radar-ish) */}
       <motion.div
         className="absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_80%,transparent)]"
         style={{ y: orbitY }}
       >
+        {/* ring statis */}
         <div className="size-[620px] hero-ring" />
         <div className="size-[820px] hero-ring" />
         <div className="size-[1020px] hero-ring" />
 
-        {/* orbit chips / dots di sini */}
-        {/* contoh 2–3 orbit seperti snippet di atas */}
+        {/* sinyal yang mengorbit di tiap ring */}
+        <OrbitDot size={620} speed={9} />
+        <OrbitDot size={620} speed={9} delay={1.5} className="size-1.5 opacity-70" />
+
+        <OrbitDot size={820} speed={12} />
+        <OrbitDot size={820} speed={12} delay={2.2} className="size-1.5 opacity-70" />
+
+        <OrbitDot size={1020} speed={16} />
+        <OrbitDot size={1020} speed={16} delay={3.1} className="size-1.5 opacity-60" />
+
+        {/* ping opsional di pusat */}
+        <CenterPing />
       </motion.div>
 
       {/* Content */}
