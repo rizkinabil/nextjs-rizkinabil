@@ -3,42 +3,10 @@
 import ArrowDown from '@/assets/icons/arrow-down.svg';
 import auroraHero from '@/assets/images/aurora-hero.png';
 import memojiImage from '@/assets/images/memoji-nabil.png';
+import { FirefliesLayer } from '@/components/FirefliesLayer';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
-
-type OrbitDotProps = {
-  size: number; // diameter ring (px) — samain dengan hero-ring
-  speed?: number; // durasi putar (detik)
-  delay?: number; // jeda awal (detik)
-  className?: string; // styling ekstra buat dot
-};
-
-const OrbitDot = ({ size, speed = 10, delay = 0, className }: OrbitDotProps) => (
-  <motion.div
-    className="absolute left-1/2 top-1/2"
-    style={{ width: size, height: size }}
-    animate={{ rotate: 360 }}
-    transition={{ repeat: Infinity, ease: 'linear', duration: speed, delay }}
-  >
-    {/* Dot diletakkan di sisi atas lingkaran */}
-    <div className="absolute left-1/2 -translate-x-1/2 -top-1">
-      <div
-        className={'size-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.8)] ' + (className ?? '')}
-      />
-    </div>
-  </motion.div>
-);
-
-/** Optional: efek ping halus dari pusat */
-const CenterPing = () => (
-  <motion.div
-    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-300/20"
-    style={{ width: 8, height: 8 }}
-    animate={{ scale: [1, 8], opacity: [0.6, 0] }}
-    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
-  />
-);
 
 export const HeroSection = () => {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -68,27 +36,16 @@ export const HeroSection = () => {
         <div className="size-[820px] hero-ring" />
         <div className="size-[1020px] hero-ring" />
 
-        {/* sinyal yang mengorbit di tiap ring */}
-        <OrbitDot size={620} speed={9} />
-        <OrbitDot size={620} speed={9} delay={1.5} className="size-1.5 opacity-70" />
-
-        <OrbitDot size={820} speed={12} />
-        <OrbitDot size={820} speed={12} delay={2.2} className="size-1.5 opacity-70" />
-
-        <OrbitDot size={1020} speed={16} />
-        <OrbitDot size={1020} speed={16} delay={3.1} className="size-1.5 opacity-60" />
-
-        {/* ping opsional di pusat */}
-        <CenterPing />
+        <FirefliesLayer count={5} />
       </motion.div>
 
       {/* Content */}
       <motion.div className="container relative flex flex-col items-center text-center" style={{ y: contentY }}>
         <Image src={memojiImage} className="size-[100px]" alt="memoji nabil" />
 
-        <div className="bg-gray-950/70 border border-gray-800/70 px-4 py-1.5 inline-flex items-center gap-3 rounded-full mt-4 backdrop-blur">
+        <div className="bg-gray-950/70 border border-gray-800/70 px-4 py-1.5 inline-flex items-center gap-3 rounded-full backdrop-blur">
           <span className="animate-pulse bg-emerald-400 size-2.5 rounded-full" />
-          <span className="text-sm font-medium text-white/80">Available for freelance projects</span>
+          <span className="text-sm font-medium text-white/80">React, Java</span>
         </div>
 
         <div className="max-w-xl mt-6">

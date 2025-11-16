@@ -1,12 +1,15 @@
-import ArrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
+'use client';
+
 import aiStartupLandingPage from '@/assets/images/ai-startup-landing-page.png';
 import darkSaasLandingPage from '@/assets/images/dark-saas-landing-page.png';
 import lightSaasLandingPage from '@/assets/images/light-saas-landing-page.png';
 import projectsHero from '@/assets/images/projects-hero.png';
 import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
-import { CheckCircle2 } from 'lucide-react';
-import Image from 'next/image';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import Image, { StaticImageData } from 'next/image';
+import { useRef } from 'react';
 
 const portfolioProjects: {
   company: string;
@@ -14,7 +17,7 @@ const portfolioProjects: {
   title: string;
   results: { title: string }[];
   link: string | null;
-  image: any;
+  image: StaticImageData;
 }[] = [
   {
     company: 'Telkom Indonesia',
@@ -55,10 +58,16 @@ const portfolioProjects: {
 ];
 
 export const ProjectsSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
+
   return (
-    <section className="pb-16 lg:py-24 relative">
-      {/* Background Image */}
+    <section ref={containerRef} className="relative pb-16 lg:py-24" id="projects">
       <div className="absolute inset-0 opacity-40 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#020817]/90 via-[#020817]/70 to-transparent" />
         <Image src={projectsHero} alt="" fill className="object-cover" priority />
       </div>
       <div className="container">
@@ -67,64 +76,118 @@ export const ProjectsSection = () => {
           title="Real-world Results"
           description="See how I transformed concepts into engaging digital experiences."
         />
-        <div className="flex flex-col mt-10 md:mt-20 gap-20">
-          {portfolioProjects.map((project, index) => (
-            <Card
-              key={project.title}
-              className="sticky rounded-3xl bg-[#020817]/80 border border-white/10 px-8 pt-8 pb-0 md:pt-12 md:px-10 lg:pt-16 lg:px-20 backdrop-blur"
-              style={{ top: `calc(64px + ${index * 40}px)` }}
-            >
-              <div className="lg:grid lg:grid-cols-2 lg:gap-16">
-                <div className="lg:pb-16">
-                  <div className="bg-gradient-to-r from-[hsl(var(--calm-blue))] to-[hsl(var(--calm-accent))] inline-flex gap-2 font-bold uppercase tracking-widest text-sm text-transparent bg-clip-text">
-                    <span>{project.company}</span>
-                    <span>&bull;</span>
-                    <span>{project.year}</span>
-                  </div>
 
-                  <h3 className="font-serif text-2xl mt-2 md:mt-5 md:text-4xl">{project.title}</h3>
-                  <hr className="border-t-2 border-white/5 mt-4 md:mt-5" />
-                  <ul className="flex flex-col gap-4 mt-4 md:mt-5">
-                    {project.results.map((result) => (
-                      <li key={result.title} className="flex gap-2 text-sm md:text-base text-muted-foreground">
-                        <CheckCircle2 className="size-5 md:size-6 text-[hsl(var(--calm-blue))]" />
-                        <span>{result.title}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <a href={project.link ?? undefined}>
-                    <button
-                      className="bg-white text-gray-950 h-12 w-full md:w-auto px-6 rounded-xl font-semibold inline-flex items-center justify-center gap-2 mt-8"
-                      disabled={!project.link}
-                    >
-                      {project.link ? (
-                        <div className="flex items-center">
-                          <span>View Live Site</span>
-                          <ArrowUpRightIcon className="size-4" />
-                        </div>
-                      ) : (
-                        <div className="flex gap-2 items-center">
-                          <span className="line-through">View Live Site</span>
-                          <div className="bg-red-500/50 rounded-xl px-2 py-1">
-                            <p className="text-[10px] text-red-500">Private</p>
-                          </div>
-                        </div>
-                      )}
-                    </button>
-                  </a>
-                </div>
-                <div className="relative">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    className="mt-8 -mb-4 md:-mb-0 lg:mt-0 lg:absolute lg:h-full lg:w-auto lg:max-w-none"
-                  />
-                </div>
-              </div>
-            </Card>
-          ))}
+        <div className="flex flex-col mt-10 md:mt-20 gap-11">
+          {portfolioProjects.map((project, index) => {
+            const targetScale = 1 - (portfolioProjects.length - index) * 0.05;
+
+            return (
+              <ProjectCard
+                key={project.title}
+                project={project}
+                index={index}
+                targetScale={targetScale}
+                range={[index * 0.25, 1]}
+                progress={scrollYProgress}
+              />
+            );
+          })}
         </div>
       </div>
     </section>
+  );
+};
+
+const ProjectCard = ({
+  project,
+  index,
+  targetScale,
+  range,
+  progress,
+}: {
+  project: (typeof portfolioProjects)[0];
+  index: number;
+  targetScale: number;
+  range: [number, number];
+  progress: any;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'start start'],
+  });
+
+  const scale = useTransform(progress, range, [1, targetScale]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.2, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const x = useTransform(scrollYProgress, [0, 1], [100, 0]);
+
+  return (
+    <motion.div
+      ref={containerRef}
+      style={{
+        scale,
+        top: `calc(64px + ${index * 40}px)`,
+      }}
+      className="sticky"
+    >
+      <Card
+        className="
+    px-8 pt-8 pb-0 md:pt-12 md:px-10 lg:pt-16 lg:px-20
+    rounded-3xl
+    bg-[#020817]/70
+    backdrop-blur-2xl
+    border border-white/10
+    shadow-[inset_0_0_20px_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.3)]
+  "
+      >
+        <div className="lg:grid lg:grid-cols-2 lg:gap-16">
+          <motion.div className="lg:pb-16" style={{ opacity }}>
+            <div className="bg-gradient-to-r from-[hsl(var(--calm-blue))] to-[hsl(var(--calm-accent))] inline-flex gap-2 font-bold uppercase tracking-widest text-sm text-transparent bg-clip-text">
+              <span>{project.company}</span>
+              <span>&bull;</span>
+              <span>{project.year}</span>
+            </div>
+            <h3 className="font-serif text-2xl md:text-4xl mt-2 md:mt-5">{project.title}</h3>
+            <hr className="border-t-2 border-border/50 mt-4 md:mt-5" />
+            <ul className="flex flex-col gap-4 mt-4 md:mt-5">
+              {project.results.map((result) => (
+                <li key={result.title} className="flex gap-2 text-sm md:text-base text-muted-foreground">
+                  <CheckCircle2 className="size-5 md:size-6 text-[hsl(var(--calm-blue))]" />
+                  <span>{result.title}</span>
+                </li>
+              ))}
+            </ul>
+            {project.link && (
+              <a href={project.link} target="_blank" rel="noopener noreferrer">
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-primary text-primary-foreground h-12 w-full md:w-auto px-6 rounded-xl font-semibold inline-flex items-center justify-center gap-2 mt-8 hover:bg-primary/90 transition-colors"
+                >
+                  <span>Visit Live Site</span>
+                  <ArrowUpRight className="size-4" />
+                </motion.button>
+              </a>
+            )}
+          </motion.div>
+
+          {/* image side */}
+          <motion.div className="relative overflow-hidden rounded-2xl" style={{ x }}>
+            <div className="absolute -inset-6 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-emerald-400/10 blur-2xl" />
+            <div className="relative rounded-2xl ring-1 ring-white/10 overflow-hidden">
+              <motion.div style={{ scale: imageScale }}>
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-auto object-cover"
+                  priority={index === 0}
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </Card>
+    </motion.div>
   );
 };
