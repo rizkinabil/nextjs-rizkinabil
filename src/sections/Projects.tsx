@@ -28,7 +28,7 @@ const portfolioProjects: {
       { title: 'Improved site speed by 50%' },
       { title: 'Increased mobile traffic by 35%' },
     ],
-    link: null,
+    link: 'https://digitalinfra.id',
     image: darkSaasLandingPage,
   },
   {
@@ -40,7 +40,7 @@ const portfolioProjects: {
       { title: 'Expanded customer reach by 35%' },
       { title: 'Increased brand awareness by 15%' },
     ],
-    link: 'https://youtu.be/7hi5zwO75yc',
+    link: null,
     image: lightSaasLandingPage,
   },
   {
@@ -52,7 +52,7 @@ const portfolioProjects: {
       { title: 'Improved site speed by 50%' },
       { title: 'Increased mobile traffic by 35%' },
     ],
-    link: 'https://youtu.be/Z7I5uSRHMHg',
+    link: null,
     image: aiStartupLandingPage,
   },
 ];
@@ -132,6 +132,7 @@ const ProjectCard = ({
       className="sticky"
     >
       <Card
+        maxCollapsedHeight={700}
         className="
     px-8 pt-8 pb-0 md:pt-12 md:px-10 lg:pt-16 lg:px-20
     rounded-3xl
@@ -173,7 +174,7 @@ const ProjectCard = ({
           </motion.div>
 
           {/* image side */}
-          <motion.div className="relative overflow-hidden rounded-2xl" style={{ x }}>
+          <motion.div className="relative overflow-hidden rounded-2xl mt-4" style={{ x }}>
             <div className="absolute -inset-6 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-emerald-400/10 blur-2xl" />
             <div className="relative rounded-2xl ring-1 ring-white/10 overflow-hidden">
               <motion.div style={{ scale: imageScale }}>

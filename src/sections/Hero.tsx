@@ -2,7 +2,6 @@
 
 import ArrowDown from '@/assets/icons/arrow-down.svg';
 import auroraHero from '@/assets/images/aurora-hero.png';
-import memojiImage from '@/assets/images/memoji-nabil.png';
 import { FirefliesLayer } from '@/components/FirefliesLayer';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
@@ -35,23 +34,21 @@ export const HeroSection = () => {
         <div className="size-[620px] hero-ring" />
         <div className="size-[820px] hero-ring" />
         <div className="size-[1020px] hero-ring" />
-
         <FirefliesLayer count={5} />
       </motion.div>
 
       {/* Content */}
-      <motion.div className="container relative flex flex-col items-center text-center" style={{ y: contentY }}>
-        <Image src={memojiImage} className="size-[100px]" alt="memoji nabil" />
-
+      <motion.div className="container relative flex flex-col items-center text-center mt-6" style={{ y: contentY }}>
         <div className="bg-gray-950/70 border border-gray-800/70 px-4 py-1.5 inline-flex items-center gap-3 rounded-full backdrop-blur">
           <span className="animate-pulse bg-emerald-400 size-2.5 rounded-full" />
           <span className="text-sm font-medium text-white/80">React, Java</span>
         </div>
 
         <div className="max-w-xl mt-6">
-          <h1 className="font-serif text-3xl md:text-5xl">Building calm, thoughtful digital experiences.</h1>
+          <h1 className="font-serif text-6xl md:text-5xl">Hello, I&apos;m Nabil!</h1>
           <p className="mt-4 text-white/70 md:text-lg">
-            I design and develop interfaces that feel as calm as this sky, but still ship fast for real product teams.
+            Delivering high-impact solutions through software fundamentals. I use mental models to build scalable
+            architecture and interfaces that offer better experience.
           </p>
         </div>
 
