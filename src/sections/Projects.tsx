@@ -1,61 +1,14 @@
 'use client';
 
-import aiStartupLandingPage from '@/assets/images/ai-startup-landing-page.png';
-import darkSaasLandingPage from '@/assets/images/dark-saas-landing-page.png';
-import lightSaasLandingPage from '@/assets/images/light-saas-landing-page.png';
 import projectsHero from '@/assets/images/projects-hero.png';
-import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
+import { getFeaturedProjects } from '@/lib/projects';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import { useRef } from 'react';
-
-const portfolioProjects: {
-  company: string;
-  year: string;
-  title: string;
-  results: { title: string }[];
-  link: string | null;
-  image: StaticImageData;
-}[] = [
-  {
-    company: 'Telkom Indonesia',
-    year: 'Ongoing',
-    title: 'Digital Infra Dashboard',
-    results: [
-      { title: 'Enhanced user experience by 40%' },
-      { title: 'Improved site speed by 50%' },
-      { title: 'Increased mobile traffic by 35%' },
-    ],
-    link: 'https://digitalinfra.id',
-    image: darkSaasLandingPage,
-  },
-  {
-    company: 'Innovative Co',
-    year: '2021',
-    title: 'Light Saas Landing Page',
-    results: [
-      { title: 'Boosted sales by 20%' },
-      { title: 'Expanded customer reach by 35%' },
-      { title: 'Increased brand awareness by 15%' },
-    ],
-    link: null,
-    image: lightSaasLandingPage,
-  },
-  {
-    company: 'Quantum Dynamics',
-    year: '2023',
-    title: 'AI Startup Landing Page',
-    results: [
-      { title: 'Enhanced user experience by 40%' },
-      { title: 'Improved site speed by 50%' },
-      { title: 'Increased mobile traffic by 35%' },
-    ],
-    link: null,
-    image: aiStartupLandingPage,
-  },
-];
+import Link from 'next/link';
+import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { Card } from '@/components/Card';
 
 export const ProjectsSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,6 +16,8 @@ export const ProjectsSection = () => {
     target: containerRef,
     offset: ['start end', 'end start'],
   });
+
+  const featuredProjects = getFeaturedProjects();
 
   return (
     <section ref={containerRef} className="relative pb-16 lg:py-24" id="projects">
@@ -78,12 +33,12 @@ export const ProjectsSection = () => {
         />
 
         <div className="flex flex-col mt-10 md:mt-20 gap-11">
-          {portfolioProjects.map((project, index) => {
-            const targetScale = 1 - (portfolioProjects.length - index) * 0.05;
+          {featuredProjects.map((project, index) => {
+            const targetScale = 1 - (featuredProjects.length - index) * 0.05;
 
             return (
               <ProjectCard
-                key={project.title}
+                key={project.id}
                 project={project}
                 index={index}
                 targetScale={targetScale}
@@ -93,11 +48,23 @@ export const ProjectsSection = () => {
             );
           })}
         </div>
+
+        {/* View All Button */}
+        <div className="flex justify-center mt-12">
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 border border-white/20 bg-white/5 hover:bg-white/10 px-6 h-12 rounded-xl text-sm font-semibold transition-colors"
+          >
+            <span>View All Projects</span>
+            <ArrowUpRight className="size-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );
 };
 
+// ... (ProjectCard component tetap sama, tapi update untuk menggunakan project.id dan Link)
 const ProjectCard = ({
   project,
   index,
@@ -105,7 +72,7 @@ const ProjectCard = ({
   range,
   progress,
 }: {
-  project: (typeof portfolioProjects)[0];
+  project: ReturnType<typeof getFeaturedProjects>[number];
   index: number;
   targetScale: number;
   range: [number, number];
@@ -130,50 +97,55 @@ const ProjectCard = ({
         top: `calc(64px + ${index * 40}px)`,
       }}
       className="sticky"
+      id="project-section-id"
     >
       <Card
         maxCollapsedHeight={700}
-        className="
-    px-8 pt-8 pb-0 md:pt-12 md:px-10 lg:pt-16 lg:px-20
-    rounded-3xl
-    bg-[#020817]/70
-    backdrop-blur-2xl
-    border border-white/10
-    shadow-[inset_0_0_20px_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.3)]
-  "
+        className="px-8 pt-8 pb-0 md:pt-12 md:px-10 lg:pt-16 lg:px-20 rounded-3xl bg-[#020817]/70 backdrop-blur-2xl border border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.3)]"
       >
         <div className="lg:grid lg:grid-cols-2 lg:gap-16">
           <motion.div className="lg:pb-16" style={{ opacity }}>
-            <div className="bg-gradient-to-r from-[hsl(var(--calm-blue))] to-[hsl(var(--calm-accent))] inline-flex gap-2 font-bold uppercase tracking-widest text-sm text-transparent bg-clip-text">
+            <div className="bg-gradient-to-r from-emerald-400 to-blue-400 inline-flex gap-2 font-bold uppercase tracking-widest text-sm text-transparent bg-clip-text">
               <span>{project.company}</span>
               <span>&bull;</span>
               <span>{project.year}</span>
             </div>
             <h3 className="font-serif text-2xl md:text-4xl mt-2 md:mt-5">{project.title}</h3>
-            <hr className="border-t-2 border-border/50 mt-4 md:mt-5" />
+            <hr className="border-t-2 border-white/10 mt-4 md:mt-5" />
             <ul className="flex flex-col gap-4 mt-4 md:mt-5">
-              {project.results.map((result) => (
-                <li key={result.title} className="flex gap-2 text-sm md:text-base text-muted-foreground">
-                  <CheckCircle2 className="size-5 md:size-6 text-[hsl(var(--calm-blue))]" />
+              {project.results.map((result: any) => (
+                <li key={result.title} className="flex gap-2 text-sm md:text-base text-white/70">
+                  <CheckCircle2 className="size-5 md:size-6 text-emerald-400" />
                   <span>{result.title}</span>
                 </li>
               ))}
             </ul>
-            {project.link && (
-              <a href={project.link} target="_blank" rel="noopener noreferrer">
+            <div className="flex gap-3 mt-8">
+              {project.link && (
+                <a href={project.link} target="_blank" rel="noopener noreferrer">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-white text-gray-900 h-12 px-6 rounded-xl font-semibold inline-flex items-center justify-center gap-2 hover:bg-white/90 transition-colors"
+                  >
+                    <span>Visit Live Site</span>
+                    <ArrowUpRight className="size-4" />
+                  </motion.button>
+                </a>
+              )}
+              <Link href={`/projects/${project.id}`}>
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-primary text-primary-foreground h-12 w-full md:w-auto px-6 rounded-xl font-semibold inline-flex items-center justify-center gap-2 mt-8 hover:bg-primary/90 transition-colors"
+                  className="border border-white/20 bg-white/5 hover:bg-white/10 h-12 px-6 rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-colors"
                 >
-                  <span>Visit Live Site</span>
+                  <span>View Details</span>
                   <ArrowUpRight className="size-4" />
                 </motion.button>
-              </a>
-            )}
+              </Link>
+            </div>
           </motion.div>
 
-          {/* image side */}
           <motion.div className="relative overflow-hidden rounded-2xl mt-4" style={{ x }}>
             <div className="absolute -inset-6 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-emerald-400/10 blur-2xl" />
             <div className="relative rounded-2xl ring-1 ring-white/10 overflow-hidden">
