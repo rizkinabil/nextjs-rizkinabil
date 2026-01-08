@@ -18,6 +18,21 @@ export const HeroSection = () => {
   const orbitY = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, 20]);
 
+  const handleScrollToProjects = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const projectsSection = document.getElementById('projects');
+    if (projectsSection) {
+      const headerOffset = 80;
+      const elementPosition = projectsSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <section ref={ref} className="relative overflow-hidden py-28 md:py-40 lg:py-52 min-h-screen">
       {/* BG aurora */}
@@ -38,7 +53,7 @@ export const HeroSection = () => {
       </motion.div>
 
       {/* Content */}
-      <motion.div className="container relative flex flex-col items-center text-center mt-6" style={{ y: contentY }}>
+      <motion.div className="container relative flex flex-col items-center text-center mt-20" style={{ y: contentY }}>
         <div className="bg-gray-950/70 border border-gray-800/70 px-4 py-1.5 inline-flex items-center gap-3 rounded-full backdrop-blur">
           <span className="animate-pulse bg-emerald-400 size-2.5 rounded-full" />
           <span className="text-sm font-medium text-white/80">React, Java</span>
@@ -53,14 +68,24 @@ export const HeroSection = () => {
         </div>
 
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
-          <button className="inline-flex items-center gap-2 border border-white/20 bg-white/5 hover:bg-white/10 px-6 h-12 rounded-xl text-sm font-semibold">
+          <a
+            href="#projects"
+            onClick={handleScrollToProjects}
+            className="inline-flex items-center gap-2 border border-white/20 bg-white/5 hover:bg-white/10 px-6 h-12 rounded-xl text-sm font-semibold transition-colors"
+          >
             <span>Explore my work</span>
             <ArrowDown className="size-4" />
-          </button>
-          <button className="inline-flex items-center gap-2 bg-white text-gray-900 h-12 px-6 rounded-xl text-sm font-semibold">
+          </a>
+
+          <a
+            href="https://linkedin.com/in/rizkinabilaufa"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-white text-gray-900 h-12 px-6 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors"
+          >
             <span>👋</span>
             <span>Let&apos;s connect</span>
-          </button>
+          </a>
         </div>
       </motion.div>
     </section>

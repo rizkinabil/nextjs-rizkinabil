@@ -1,139 +1,9 @@
-import bookImage from '@/assets/images/book-cover.png';
-import { Card } from '@/components/Card';
-import { SectionHeader } from '@/components/SectionHeader';
-
 import Image from 'next/image';
 
-import ChromeIcon from '@/assets/icons/chrome.svg';
-import CssIcon from '@/assets/icons/css3.svg';
-import GitHubIcon from '@/assets/icons/github.svg';
-import HTMLIcon from '@/assets/icons/html5.svg';
-import ReactIcon from '@/assets/icons/react.svg';
-import JavascriptIcon from '@/assets/icons/square-js.svg';
-
-import mapImage from '@/assets/images/map.png';
-import smileMemoji from '@/assets/images/memoji-smile.png';
-import { CardHeader } from '@/components/CardHeader';
 import { ToolboxItems } from '@/components/ToolboxItems';
-
-const toolboxItems = [
-  {
-    title: 'Javascript',
-    iconType: JavascriptIcon,
-  },
-  {
-    title: 'HTML5',
-    iconType: HTMLIcon,
-  },
-  {
-    title: 'CSS3',
-    iconType: CssIcon,
-  },
-  {
-    title: 'React',
-    iconType: ReactIcon,
-  },
-  {
-    title: 'Chrome',
-    iconType: ChromeIcon,
-  },
-  {
-    title: 'GitHub',
-    iconType: GitHubIcon,
-  },
-];
-
-const hobbies = [
-  {
-    title: 'Painting',
-    emoji: '🖌️',
-    left: '5%',
-    top: '5%',
-  },
-  {
-    title: 'Photography',
-    emoji: '📷',
-    left: '50%',
-    top: '5%',
-  },
-  {
-    title: 'Gaming',
-    emoji: '🎮',
-    left: '10%',
-    top: '35%',
-  },
-  {
-    title: 'Hiking',
-    emoji: '🚶‍♀️‍➡️',
-    left: '35%',
-    top: '45%',
-  },
-  {
-    title: 'Music',
-    emoji: '🎹',
-    left: '70%',
-    top: '45%',
-  },
-  {
-    title: 'Fitness',
-    emoji: '💪',
-    left: '5%',
-    top: '65%',
-  },
-  {
-    title: 'Futsal',
-    emoji: '⚽',
-    left: '45%',
-    top: '70%',
-  },
-];
+import { experiences, highlights, profile, toolboxItems } from '@/lib/about';
 
 export const AboutSection = () => {
-  // Mock Data CV
-  const profile = {
-    name: 'Rizki Nabil Aufa',
-    headline: 'Frontend Engineer & UI Enthusiast',
-    location: 'Bandung, Indonesia',
-    email: 'nabil@email.com',
-    github: 'rizkinabil',
-    linkedin: 'nabilrizki',
-    summary:
-      'Creative, detail-oriented frontend engineer with a passion for building intuitive and visually engaging products. Experienced in React & modern web stacks. Love to learn and always up for fresh UI challenges.',
-    avatar: smileMemoji, // Mock photo
-  };
-
-  // MOCK EXPERIENCE DATA
-  const experiences = [
-    {
-      company: 'PT Kreatif Kode',
-      period: '2023 – Sekarang',
-      job: 'Frontend Engineer',
-      description:
-        'Mendesain dan membangun user interface interaktif serta scalable untuk SaaS fintech menggunakan React dan Next.js.',
-    },
-    {
-      company: 'StartupIn',
-      period: '2021 – 2023',
-      job: 'Frontend Developer',
-      description:
-        'Kolaborasi dengan tim lintas fungsi mengembangkan MVP web apps modern untuk startup edukasi dan kesehatan.',
-    },
-    {
-      company: 'Freelance',
-      period: '2019 – 2021',
-      job: 'UI Designer & Web Dev',
-      description:
-        'Membuat landing page dan website portfolio untuk UKM & personal branding, mengedepankan UI/UX smooth dan attractive.',
-    },
-  ];
-
-  const highlights = [
-    { label: 'Experience', value: '4+ Years' },
-    { label: 'Education', value: 'S1 Informatika, ITB' },
-    { label: 'Freelance', value: 'Available' },
-    { label: 'Tech Focus', value: 'React, Next.js, Tailwind' },
-  ];
-
   // Dummy Github Contribution SVG (mock)
   const githubContribution = (
     <svg viewBox="0 0 104 20" width="100%" height="40" className="mt-4">
@@ -157,7 +27,6 @@ export const AboutSection = () => {
   return (
     <div className="py-20 bg-gray-950 min-h-[80vh]">
       <div className="container max-w-5xl mx-auto px-2 md:px-6">
-        {/* <SectionHeader eyeBrow="Profile Overview" title="Rizki Nabil Aufa" description="" /> */}
         <div className="flex flex-col md:flex-row md:gap-10 gap-8 mt-12">
           <aside className="w-full md:max-w-[270px] flex-shrink-0">
             <div className="flex flex-col items-center md:items-start">
@@ -244,7 +113,9 @@ export const AboutSection = () => {
                   <div key={idx} className="rounded-lg border border-gray-800 bg-gray-900 p-4 flex flex-col gap-1">
                     <span className="font-semibold text-white text-base">{exp.job}</span>
                     <span className="text-emerald-400 text-sm">{exp.company}</span>
-                    <span className="text-xs text-gray-400 mb-1">{exp.period}</span>
+                    <span className="text-xs text-gray-400 mb-1">
+                      {exp.period} • {exp.location}
+                    </span>
                     <span className="text-xs text-white/70 leading-5">{exp.description}</span>
                   </div>
                 ))}
