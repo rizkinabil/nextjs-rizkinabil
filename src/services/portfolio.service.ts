@@ -1,12 +1,5 @@
 import { apiClient } from '@/lib/api-client';
-import type { 
-  Profile, 
-  Testimonial, 
-  Project, 
-  Experience, 
-  ToolboxItem, 
-  Highlight 
-} from '@/types/frontend.types';
+import type { Profile, Testimonial, Project, Experience, ToolboxItem, Highlight } from '@/types/frontend.types';
 import type {
   ProfileData,
   TestimonialData,

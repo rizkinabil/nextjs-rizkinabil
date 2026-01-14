@@ -178,7 +178,7 @@ export const TestimonialsSection = () => {
                     >
                       <div className="flex gap-4 items-center">
                         <div className="size-14 bg-muted rounded-full inline-flex items-center justify-center flex-shrink-0 overflow-hidden">
-                          <Image src={testimonial.avatar} alt={testimonial.name} className="size-full" />
+                          <Image src={testimonial.avatar} alt={testimonial.name} className="size-full" fill />
                         </div>
                         <div>
                           <div className="font-semibold">{testimonial.name}</div>

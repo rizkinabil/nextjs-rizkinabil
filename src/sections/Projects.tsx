@@ -181,6 +181,7 @@ const ProjectCard = ({
                   alt={project.title}
                   className="w-full h-auto object-cover"
                   priority={index === 0}
+                  fill
                 />
               </motion.div>
             </div>

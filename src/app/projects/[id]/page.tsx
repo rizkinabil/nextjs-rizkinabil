@@ -1,6 +1,8 @@
 import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
-import { getProjectById, projects } from '@/lib/projects';
+import { getAllProjects } from '@/lib/database-service';
+import type { Project } from '@/types/frontend.types';
+import { useProject } from '@/hooks/usePortfolio';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Github, ExternalLink } from 'lucide-react';
@@ -13,13 +15,30 @@ interface ProjectDetailPageProps {
 }
 
 export async function generateStaticParams() {
-  return projects.map((project) => ({
+  const allProjects = await getAllProjects();
+  return allProjects.map((project) => ({
     id: project.id,
   }));
 }
 
 export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
-  const project = getProjectById(params.id);
+  const { data: project, loading, error } = useProject(params.id);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <p className="text-white/70">Loading project...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <p className="text-red-400">Error: {error}</p>
+      </div>
+    );
+  }
 
   if (!project) {
     notFound();

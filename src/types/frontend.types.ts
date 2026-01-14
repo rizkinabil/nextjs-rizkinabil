@@ -30,6 +30,7 @@ export interface Project {
   github?: string;
   featured: boolean;
   results: Array<{ title: string }>;
+  category: 'web' | 'mobile' | 'dashboard' | 'landing page';
   tags: string[];
 }
 

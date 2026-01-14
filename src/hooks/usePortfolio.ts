@@ -1,6 +1,8 @@
+'use client';
+
 import { PortfolioService } from '@/services/portfolio.service';
 import type { LoadingState } from '@/types/frontend.types';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Generic hook for data fetching
 function useAsyncData<T>(fetchFn: () => Promise<T>, deps: React.DependencyList = []): LoadingState<T> {
@@ -10,13 +12,17 @@ function useAsyncData<T>(fetchFn: () => Promise<T>, deps: React.DependencyList =
     error: null,
   });
 
+  // Use ref to store the latest fetchFn to avoid stale closures
+  const fetchFnRef = useRef(fetchFn);
+  fetchFnRef.current = fetchFn;
+
   useEffect(() => {
     let mounted = true;
 
     const fetchData = async () => {
       try {
         setState((prev) => ({ ...prev, loading: true, error: null }));
-        const data = await fetchFn();
+        const data = await fetchFnRef.current();
 
         if (mounted) {
           setState({ data, loading: false, error: null });
@@ -37,6 +43,7 @@ function useAsyncData<T>(fetchFn: () => Promise<T>, deps: React.DependencyList =
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return state;
