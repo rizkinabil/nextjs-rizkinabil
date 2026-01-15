@@ -87,6 +87,7 @@ export interface Database {
           id: string;
           title: string;
           company: string;
+          category: string;
           year: string;
           description: string | null;
           image: string;

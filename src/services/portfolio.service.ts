@@ -45,6 +45,7 @@ class PortfolioTransformer {
       image: data.image,
       link: data.link || undefined,
       github: data.github_link || undefined,
+      category: data.category,
       featured: data.featured,
       results: Array.isArray(data.results) ? data.results : [],
       tags: Array.isArray(data.tech_stack) ? data.tech_stack : [],
