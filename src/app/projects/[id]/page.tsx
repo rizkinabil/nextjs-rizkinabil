@@ -1,24 +1,17 @@
+'use client';
+
+import { useProject } from '@/hooks/usePortfolio';
 import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
-import { getAllProjects } from '@/lib/database-service';
-import type { Project } from '@/types/frontend.types';
-import { useProject } from '@/hooks/usePortfolio';
+import { ArrowLeft, CheckCircle2, ExternalLink, Github } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ArrowUpRight, CheckCircle2, Github, ExternalLink } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 interface ProjectDetailPageProps {
   params: {
     id: string;
   };
-}
-
-export async function generateStaticParams() {
-  const allProjects = await getAllProjects();
-  return allProjects.map((project) => ({
-    id: project.id,
-  }));
 }
 
 export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
