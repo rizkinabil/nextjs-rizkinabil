@@ -1,9 +1,29 @@
-import Image from 'next/image';
+'use client';
 
 import { ToolboxItems } from '@/components/ToolboxItems';
-import { experiences, highlights, profile, toolboxItems } from '@/lib/about';
+import { useAboutData } from '@/hooks/usePortfolio';
+import Image from 'next/image';
 
 export const AboutSection = () => {
+  const { profile, experiences, toolboxItems, highlights, loading, error } = useAboutData();
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="py-20 bg-gray-950 min-h-[80vh] flex items-center justify-center">
+        <div className="text-white">Loading profile...</div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !profile) {
+    return (
+      <div className="py-20 bg-gray-950 min-h-[80vh] flex items-center justify-center">
+        <div className="text-red-400">{error || 'Profile not found'}</div>
+      </div>
+    );
+  }
   // Dummy Github Contribution SVG (mock)
   const githubContribution = (
     <svg viewBox="0 0 104 20" width="100%" height="40" className="mt-4">
@@ -33,6 +53,8 @@ export const AboutSection = () => {
               <Image
                 src={profile.avatar}
                 alt={profile.name}
+                width={112}
+                height={112}
                 className="w-28 h-28 rounded-full border border-gray-700 object-cover mb-3"
               />
               <span className="text-white font-bold text-2xl leading-6">{profile.name}</span>

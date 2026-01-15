@@ -1,23 +1,49 @@
 'use client';
 
 import projectsHero from '@/assets/images/projects-hero.png';
-import { SectionHeader } from '@/components/SectionHeader';
-import { getFeaturedProjects } from '@/lib/projects';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import Image from 'next/image';
-import { useRef } from 'react';
-import Link from 'next/link';
-import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { Card } from '@/components/Card';
+import { SectionHeader } from '@/components/SectionHeader';
+import { useFeaturedProjects } from '@/hooks/usePortfolio';
+import type { Project } from '@/types/frontend.types';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRef } from 'react';
 
 export const ProjectsSection = () => {
+  const { data: featuredProjects, loading, error } = useFeaturedProjects();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start'],
   });
 
-  const featuredProjects = getFeaturedProjects();
+  // Loading state
+  if (loading) {
+    return (
+      <section ref={containerRef} className="relative pb-16 lg:py-24" id="projects">
+        <div className="container">
+          <SectionHeader eyeBrow="Featured Projects" title="Real-world Results" description="Loading projects..." />
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error || !featuredProjects) {
+    return (
+      <section ref={containerRef} className="relative pb-16 lg:py-24" id="projects">
+        <div className="container">
+          <SectionHeader
+            eyeBrow="Featured Projects"
+            title="Real-world Results"
+            description={error || 'Failed to load projects'}
+          />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={containerRef} className="relative pb-16 lg:py-24" id="projects">
@@ -72,7 +98,7 @@ const ProjectCard = ({
   range,
   progress,
 }: {
-  project: ReturnType<typeof getFeaturedProjects>[number];
+  project: Project;
   index: number;
   targetScale: number;
   range: [number, number];
@@ -155,6 +181,7 @@ const ProjectCard = ({
                   alt={project.title}
                   className="w-full h-auto object-cover"
                   priority={index === 0}
+                  fill
                 />
               </motion.div>
             </div>
