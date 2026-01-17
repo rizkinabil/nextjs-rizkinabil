@@ -1,6 +1,5 @@
 'use client';
 
-import projectsHero from '@/assets/images/projects-hero.png';
 import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useFeaturedProjects } from '@/hooks/usePortfolio';
@@ -47,10 +46,10 @@ export const ProjectsSection = () => {
 
   return (
     <section ref={containerRef} className="relative pb-16 lg:py-24" id="projects">
-      <div className="absolute inset-0 opacity-40 pointer-events-none">
+      {/* <div className="absolute inset-0 opacity-40 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-[#020817]/90 via-[#020817]/70 to-transparent" />
         <Image src={projectsHero} alt="" fill className="object-cover" priority />
-      </div>
+      </div> */}
       <div className="container">
         <SectionHeader
           eyeBrow="Featured Projects"
@@ -179,9 +178,10 @@ const ProjectCard = ({
                 <Image
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-auto object-cover"
+                  height={400}
+                  width={600}
+                  className="w-full object-cover"
                   priority={index === 0}
-                  fill
                 />
               </motion.div>
             </div>

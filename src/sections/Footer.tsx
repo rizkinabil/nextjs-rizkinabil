@@ -108,10 +108,10 @@ export const Footer = () => {
               <a href="#projects" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
                 Projects
               </a>
-              <a href="#about" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
+              <a href="/about" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
                 About
               </a>
-              <a href="#contact" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
+              <a href="https://t.me/rizkinbil" target='_blank' className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
                 Contact
               </a>
             </nav>
