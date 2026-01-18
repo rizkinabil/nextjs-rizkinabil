@@ -1,7 +1,8 @@
 'use client';
 
 import ArrowDown from '@/assets/icons/arrow-down.svg';
-import auroraHero from '@/assets/images/aurora-hero.png';
+import auroraHero from '@/assets/images/hero-section.png';
+import memojiImage from '@/assets/images/memoji-nabil.png';
 import { FirefliesLayer } from '@/components/FirefliesLayer';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
@@ -54,9 +55,10 @@ export const HeroSection = () => {
 
       {/* Content */}
       <motion.div className="container relative flex flex-col items-center text-center mt-20" style={{ y: contentY }}>
+        <Image src={memojiImage} className="size-[100px]" alt="memoji a person working behind a laptop" />
         <div className="bg-gray-950/70 border border-gray-800/70 px-4 py-1.5 inline-flex items-center gap-3 rounded-full backdrop-blur">
           <span className="animate-pulse bg-emerald-400 size-2.5 rounded-full" />
-          <span className="text-sm font-medium text-white/80">React, Java</span>
+          <span className="text-sm font-medium text-white/80">Available for opportunities</span>
         </div>
 
         <div className="max-w-xl mt-6">

@@ -173,7 +173,7 @@ export const TestimonialsSection = () => {
                     className="flex-shrink-0"
                   >
                     <Card
-                      className="max-w-xs md:max-w-md md:p-8 transition-transform bg-[#020817]/70 border border-white/10 backdrop-blur-xl"
+                      className="p-6 max-w-xs md:max-w-md md:p-8 transition-transform bg-[#020817]/70 border border-white/10 backdrop-blur-xl"
                       source={testimonial.source}
                     >
                       <div className="flex gap-4 items-center">

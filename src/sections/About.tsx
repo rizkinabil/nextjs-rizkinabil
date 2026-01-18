@@ -1,11 +1,12 @@
 'use client';
 
 import { ToolboxItems } from '@/components/ToolboxItems';
+import { TOOLBOX_ITEMS } from '@/constants/toolboxItems';
 import { useAboutData } from '@/hooks/usePortfolio';
 import Image from 'next/image';
 
 export const AboutSection = () => {
-  const { profile, experiences, toolboxItems, highlights, loading, error } = useAboutData();
+  const { profile, experiences, highlights, loading, error } = useAboutData();
 
   // Loading state
   if (loading) {
@@ -24,25 +25,6 @@ export const AboutSection = () => {
       </div>
     );
   }
-  // Dummy Github Contribution SVG (mock)
-  const githubContribution = (
-    <svg viewBox="0 0 104 20" width="100%" height="40" className="mt-4">
-      {[...Array(7)].map((_, row) =>
-        [...Array(15)].map((_, col) => (
-          <rect
-            key={row + '-' + col}
-            x={col * 7}
-            y={row * 7}
-            width="6"
-            height="6"
-            rx="1"
-            fill={col % 3 === 0 ? '#34d399' : col % 4 === 0 ? '#38bdf8' : '#164e63'}
-            opacity={Math.random() * 0.25 + 0.75}
-          />
-        ))
-      )}
-    </svg>
-  );
 
   return (
     <div className="py-20 bg-gray-950 min-h-[80vh]">
@@ -121,16 +103,10 @@ export const AboutSection = () => {
               <p className="text-white/70 text-sm leading-6">{profile.summary}</p>
             </div>
 
-            {/* Contribution chart */}
-            <div className="mb-8">
-              <h3 className="text-base text-gray-300 font-semibold mb-2">GitHub Contribution</h3>
-              <div className="rounded border border-gray-800 bg-gray-900 py-2 px-2 w-fit">{githubContribution}</div>
-            </div>
-
             <div className="mb-8">
               <h3 className="text-base text-gray-300 font-semibold mb-2">Tech Stack</h3>
               <div className="">
-                <ToolboxItems items={toolboxItems} className="gap-3" />
+                <ToolboxItems items={TOOLBOX_ITEMS} className="gap-3" />
               </div>
             </div>
 

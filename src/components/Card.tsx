@@ -7,7 +7,6 @@ interface CardProps {
   className?: string;
   style?: CSSProperties;
   source?: string; // e.g., "LinkedIn"
-  maxCollapsedHeight?: number;
 }
 
 export const Card = ({ className, children, style, source }: PropsWithChildren<CardProps>) => {
@@ -15,7 +14,7 @@ export const Card = ({ className, children, style, source }: PropsWithChildren<C
     <div
       className={cn(
         'bg-gray-800 rounded-3xl relative z-0 overflow-hidden transition-all duration-500 ease-in-out',
-        "after:-z-10 after:content-[''] after:absolute after:inset-0 after:outline-2 after:outline after:-outline-offset-2 after:rounded-3xl after:outline-white/20 after:pointer-events-none p-6",
+        "after:-z-10 after:content-[''] after:absolute after:inset-0 after:outline-2 after:outline after:-outline-offset-2 after:rounded-3xl after:outline-white/20 after:pointer-events-none",
         className
       )}
       style={{
