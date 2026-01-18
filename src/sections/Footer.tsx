@@ -36,9 +36,9 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const profile = {
     name: 'Rizki Nabil Aufa',
-    email: 'nabil@email.com',
+    email: 'rizukinbr@gmail.com',
     github: 'rizkinabil',
-    linkedin: 'nabilrizki',
+    linkedin: 'rizkinabilaufa',
   };
 
   return (

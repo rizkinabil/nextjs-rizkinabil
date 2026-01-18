@@ -62,8 +62,7 @@ export const HeroSection = () => {
         <div className="max-w-xl mt-6">
           <h1 className="font-serif text-6xl md:text-5xl">Hello, I&apos;m Nabil!</h1>
           <p className="mt-4 text-white/70 md:text-lg">
-            Delivering high-impact solutions through software fundamentals. I use mental models to build scalable
-            architecture and interfaces that offer better experience.
+            Helping you turn great ideas into scalable software and seamless user experiences. Combining mental models and solid architecture to build high-performance, high-impact products.
           </p>
         </div>
 
