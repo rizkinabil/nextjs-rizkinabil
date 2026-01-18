@@ -14,7 +14,7 @@ export const ToolboxItems = ({
   return (
     <div
       className={twMerge(
-        'flex [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
+        'flex',
         className
       )}
     >

@@ -105,7 +105,7 @@ export const AboutSection = () => {
 
             <div className="mb-8">
               <h3 className="text-base text-gray-300 font-semibold mb-2">Tech Stack</h3>
-              <div className="">
+              <div className="overflow-x-scroll">
                 <ToolboxItems items={TOOLBOX_ITEMS} className="gap-3" />
               </div>
             </div>

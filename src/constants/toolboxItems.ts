@@ -10,7 +10,7 @@ export const TOOLBOX_ITEMS: ToolboxItem[] = [
   {
     id: "2",
     title: "Next.js",
-    iconUrl: "/icons/nextjs.svg",
+    iconUrl: "/next.svg",
     category: "Frontend Framework",
   },
   {
