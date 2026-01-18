@@ -36,9 +36,9 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const profile = {
     name: 'Rizki Nabil Aufa',
-    email: 'nabil@email.com',
+    email: 'rizukinbr@gmail.com',
     github: 'rizkinabil',
-    linkedin: 'nabilrizki',
+    linkedin: 'rizkinabilaufa',
   };
 
   return (
@@ -108,10 +108,10 @@ export const Footer = () => {
               <a href="#projects" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
                 Projects
               </a>
-              <a href="#about" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
+              <a href="/about" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
                 About
               </a>
-              <a href="#contact" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
+              <a href="https://t.me/rizkinbil" target='_blank' className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
                 Contact
               </a>
             </nav>
@@ -122,7 +122,7 @@ export const Footer = () => {
             <h4 className="text-white font-semibold text-sm uppercase tracking-wider">Stay Updated</h4>
             <p className="text-sm text-white/70">Get notified when I publish new articles or projects.</p>
             <form onSubmit={handleNewsletterSubmit} className="space-y-2">
-              <div className="flex gap-2">
+              <div className="flex flex-col md:flex-row gap-2">
                 <input
                   type="email"
                   value={email}

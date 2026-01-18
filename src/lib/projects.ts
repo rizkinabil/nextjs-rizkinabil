@@ -133,6 +133,44 @@ export const projects: Project[] = [
     category: 'web',
     featured: false,
   },
+  {
+    id: 'staycation',
+    company: 'Client Project',
+    year: '2023',
+    title: 'Staycation',
+    description:
+      'Full-stack hotel booking web application using MERN stack (MongoDB, Express.js, React, Node.js). Features include user authentication, property search, booking management, and admin panel for property owners.',
+    results: [
+      { title: 'Developed a robust hotel booking platform' },
+      { title: 'Implemented secure user authentication and authorization' },
+      { title: 'Enabled efficient property search and booking management' },
+    ],
+    link: null,
+    github: null,
+    image: darkSaasLandingPage,
+    tags: ['MongoDB', 'Express.js', 'React', 'Node.js', 'Material UI'],
+    category: 'web',
+    featured: false,
+  },
+  {
+    id: 'authorization-management-system',
+    company: 'Client Project',
+    year: '2024',
+    title: 'Authorization Management System',
+    description:
+      'Dashboard web application for comprehensive authorization management, implementing Role-Based Access Control (RBAC) and Attribute-Based Access Control (ABAC). Developed with Java Spring Boot for backend, Redis Cache for performance, and React for the frontend.',
+    results: [
+      { title: 'Designed and implemented RBAC and ABAC features' },
+      { title: 'Optimized performance with Redis Cache integration' },
+      { title: 'Developed a scalable and secure authorization dashboard' },
+    ],
+    link: null,
+    github: null,
+    image: aiStartupLandingPage,
+    tags: ['Java Spring Boot', 'Redis', 'React', 'TypeScript', 'Material UI'],
+    category: 'dashboard',
+    featured: false,
+  },
 ];
 
 export function getProjectById(id: string): Project | undefined {

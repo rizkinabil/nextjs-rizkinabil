@@ -7,12 +7,14 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
-import { cn } from '@/lib/utils';
-import { testimonials } from '@/lib/testimonials';
+import { useTestimonials } from '@/hooks/usePortfolio';
+import { cn } from '@/utils/cn';
 
 export const TestimonialsSection = () => {
   const contentCardRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const { data: testimonials, loading: testimonialsLoading, error: testimonialFailed } = useTestimonials();
+
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -65,6 +67,44 @@ export const TestimonialsSection = () => {
     window.addEventListener('resize', checkOverflow);
     return () => window.removeEventListener('resize', checkOverflow);
   }, [contentCardRef]);
+
+  if (testimonialsLoading) {
+    console.log('loading here');
+    return (
+      <div className="py-16 lg:py-24">
+        <div className="container">
+          <SectionHeader
+            eyeBrow="Recommendations"
+            title="What Peoples Say About Me"
+            description="Don't just take my word for it. See what peoples have to say about my work."
+          />
+          <div className="mt-16 lg:mt-24 flex justify-center">
+            <p>Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (testimonialFailed) {
+    return (
+      <div className="py-16 lg:py-24">
+        <div className="container">
+          <SectionHeader
+            eyeBrow="Recommendations"
+            title="What Peoples Say About Me"
+            description="Don't just take my word for it. See what peoples have to say about my work."
+          />
+          <div className="mt-16 lg:mt-24 flex justify-center">
+            {/* <ErrorMessage
+               message="Failed to load testimonials. Please try again later."
+               onRetry={() => window.location.reload()}
+             /> */}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 lg:py-24">
@@ -125,7 +165,7 @@ export const TestimonialsSection = () => {
               "
             >
               <div className="flex gap-8 flex-none pr-8 animate-scroll hover:[animation-play-state:paused] cursor-pointer">
-                {testimonials.map((testimonial, index) => (
+                {testimonials?.map((testimonial, index) => (
                   <motion.div
                     key={`${testimonial.name}-${index}`}
                     whileHover={{ rotate: -3, scale: 1.05 }}
@@ -133,12 +173,12 @@ export const TestimonialsSection = () => {
                     className="flex-shrink-0"
                   >
                     <Card
-                      className="max-w-xs md:max-w-md md:p-8 transition-transform bg-[#020817]/70 border border-white/10 backdrop-blur-xl"
+                      className="p-6 max-w-xs md:max-w-md md:p-8 transition-transform bg-[#020817]/70 border border-white/10 backdrop-blur-xl"
                       source={testimonial.source}
                     >
                       <div className="flex gap-4 items-center">
                         <div className="size-14 bg-muted rounded-full inline-flex items-center justify-center flex-shrink-0 overflow-hidden">
-                          <Image src={testimonial.avatar} alt={testimonial.name} className="size-full" />
+                          <Image src={testimonial.avatar} alt={testimonial.name} width={56} height={56} />
                         </div>
                         <div>
                           <div className="font-semibold">{testimonial.name}</div>

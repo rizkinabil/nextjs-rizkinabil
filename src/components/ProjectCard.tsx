@@ -1,10 +1,10 @@
 'use client';
 
-import { Project } from '@/lib/projects';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { Project } from '@/types/frontend.types';
 
 interface ProjectCardProps {
   project: Project;
