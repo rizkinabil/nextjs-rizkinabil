@@ -1,6 +1,7 @@
 'use client';
 
 import { ToolboxItems } from '@/components/ToolboxItems';
+import { ABOUT_IMAGES } from '@/constants/aboutImages';
 import { TOOLBOX_ITEMS } from '@/constants/toolboxItems';
 import { useAboutData } from '@/hooks/usePortfolio';
 import Image from 'next/image';
@@ -27,9 +28,10 @@ export const AboutSection = () => {
   }
 
   return (
-    <div className="py-20 bg-gray-950 min-h-[80vh]">
-      <div className="container max-w-5xl mx-auto px-2 md:px-6">
-        <div className="flex flex-col md:flex-row md:gap-10 gap-8 mt-12">
+    <div className="relative py-20 min-h-[80vh] overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 0%, #16a34a80, transparent 70%)' }}></div>
+      <div className="container max-w-5xl mx-auto px-2 md:px-6 relative z-10">
+        <div className="flex flex-col md:flex-row md:gap-10 gap-8 mt-24">
           <aside className="w-full md:max-w-[270px] flex-shrink-0">
             <div className="flex flex-col items-center md:items-start">
               <Image
@@ -98,6 +100,52 @@ export const AboutSection = () => {
           </aside>
 
           <main className="flex-1 min-w-0">
+            <div className="mb-12 text-center md:text-left">
+              <h1 className="text-4xl font-bold text-white mb-4 leading-tight">
+                The story of me being \
+              </h1>
+              <p className="text-white/70 text-base max-w-2xl mx-auto md:mx-0">
+                This cool template is cooked up by <span className="text-emerald-400">Shaashi</span> and{' '}
+                <span className="text-emerald-400">Sunai</span>. Feel free to spill the beans about
+                yourself in this zone—share your work wizardry, your fave hobbies, and whatever floats your
+                boat right now. This space is all about letting your story shine, so go ahead and tell it
+                like it's hot!
+              </p>
+            </div>
+
+            <div className="grid grid-cols-5 gap-3 mb-20">
+              {ABOUT_IMAGES.map((src, idx) => (
+                <div
+                  key={idx}
+                  className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-700 shadow-lg"
+                >
+                  <Image src={src} alt={`About image ${idx + 1}`} layout="fill" objectFit="cover" />
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center md:text-left mb-12">
+              <span className="block text-emerald-400 font-semibold text-sm mb-2">MY EXPERIENCES</span>
+              <h2 className="text-4xl font-bold text-white">Where I've Been Employed</h2>
+            </div>
+
+            <div className="mb-8">
+              {experiences.map((exp, idx) => (
+                <div key={idx} className="mb-8 flex flex-col md:flex-row md:gap-8">
+                  <div className="flex-shrink-0 md:w-1/3">
+                    <h4 className="font-semibold text-white text-lg">{exp.job}</h4>
+                    <p className="text-emerald-400 text-sm">{exp.company}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {exp.period} / {exp.location}
+                    </p>
+                  </div>
+                  <div className="flex-1 mt-4 md:mt-0">
+                    <p className="text-sm text-white/80 leading-6">{exp.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <div className="mb-8">
               <h2 className="text-xl font-bold text-white mb-1">Overview</h2>
               <p className="text-white/70 text-sm leading-6">{profile.summary}</p>
@@ -107,22 +155,6 @@ export const AboutSection = () => {
               <h3 className="text-base text-gray-300 font-semibold mb-2">Tech Stack</h3>
               <div className="overflow-x-scroll">
                 <ToolboxItems items={TOOLBOX_ITEMS} className="gap-3" />
-              </div>
-            </div>
-
-            <div className="mb-2">
-              <h3 className="text-base text-gray-300 font-semibold mb-3">Experience</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {experiences.map((exp, idx) => (
-                  <div key={idx} className="rounded-lg border border-gray-800 bg-gray-900 p-4 flex flex-col gap-1">
-                    <span className="font-semibold text-white text-base">{exp.job}</span>
-                    <span className="text-emerald-400 text-sm">{exp.company}</span>
-                    <span className="text-xs text-gray-400 mb-1">
-                      {exp.period} • {exp.location}
-                    </span>
-                    <span className="text-xs text-white/70 leading-5">{exp.description}</span>
-                  </div>
-                ))}
               </div>
             </div>
           </main>
