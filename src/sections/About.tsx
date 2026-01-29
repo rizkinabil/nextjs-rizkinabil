@@ -1,5 +1,6 @@
 'use client';
 
+import GlobeImage from '@/assets/images/journey.png';
 import { ABOUT_IMAGES } from '@/constants/aboutImages';
 import { useAboutData } from '@/hooks/usePortfolio';
 import Image from 'next/image';
@@ -55,10 +56,11 @@ export const AboutSection = () => {
         />
       </div>
 
-      <div className="container max-w-5xl mx-auto px-2 md:px-6 relative z-10">
-        <div className="flex flex-col gap-8 mt-24">
+      <div className="container max-w-5xl mx-auto px-2 md:px-6 relative">
+        <div className="flex flex-col gap-8 mt-24 px-4">
           <div className="flex-1 min-w-0">
             <div className="mb-24 text-center">
+              <Image src={GlobeImage} alt="Globe" className="mx-auto mb-8 rounded-lg" width={160} />
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight font-serif">
                 The journey of me
               </h1>

@@ -1,7 +1,9 @@
-export const ABOUT_IMAGES = [
-  '/images/about/img1.jpg',
-  '/images/about/img2.jpg',
-  '/images/about/img3.jpg',
-  '/images/about/img4.jpg',
-  '/images/about/img5.jpg',
-];
+import deskSetup from '@/assets/images/desk-setup.jpeg';
+import discussion from '@/assets/images/discussion.jpeg';
+import hyundai from '@/assets/images/hyundai-kia-tower.jpg';
+import namsan from '@/assets/images/namsan-tower.jpeg';
+import team from '@/assets/images/team.jpg';
+
+import type { StaticImageData } from 'next/image';
+
+export const ABOUT_IMAGES: StaticImageData[] = [deskSetup, discussion, namsan, team, hyundai];
