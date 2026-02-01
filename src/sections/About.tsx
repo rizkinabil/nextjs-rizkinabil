@@ -1,12 +1,62 @@
 'use client';
 
-import { ToolboxItems } from '@/components/ToolboxItems';
-import { TOOLBOX_ITEMS } from '@/constants/toolboxItems';
+import GlobeImage from '@/assets/images/journey.png';
+import { ABOUT_IMAGES } from '@/constants/aboutImages';
 import { useAboutData } from '@/hooks/usePortfolio';
+import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export const AboutSection = () => {
-  const { profile, experiences, highlights, loading, error } = useAboutData();
+  const { profile, experiences, loading, error } = useAboutData();
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [groupHovered, setGroupHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [cards, setCards] = useState(ABOUT_IMAGES.slice());
+  // framer-motion controls for the top card
+  const topControls = useAnimation();
+  const [dragX, setDragX] = useState(0);
+  const swipeThreshold = 120; // px
+
+  const handleDragEnd = async (offsetX: number, velocityX: number) => {
+    const dir = offsetX > 0 ? 1 : -1;
+    const passed = Math.abs(offsetX) > swipeThreshold || Math.abs(velocityX) > 500;
+    const animDistance = dir * (window.innerWidth + 300);
+
+    if (passed) {
+      // fly off
+      await topControls.start({
+        x: animDistance,
+        rotate: dir * 30,
+        transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+      });
+      // reorder based on direction: right -> next, left -> previous
+      setCards((prev) => {
+        const copy = [...prev];
+        if (dir > 0) {
+          const first = copy.shift();
+          if (first) copy.push(first);
+        } else {
+          const last = copy.pop();
+          if (last) copy.unshift(last);
+        }
+        return copy;
+      });
+      // reset transform instantly
+      await topControls.set({ x: 0, rotate: 0 });
+    } else {
+      // snap back with spring
+      await topControls.start({ x: 0, rotate: 0, transition: { type: 'spring', stiffness: 300, damping: 30 } });
+    }
+    setDragX(0);
+  };
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Loading state
   if (loading) {
@@ -27,105 +77,243 @@ export const AboutSection = () => {
   }
 
   return (
-    <div className="py-20 bg-gray-950 min-h-[80vh]">
-      <div className="container max-w-5xl mx-auto px-2 md:px-6">
-        <div className="flex flex-col md:flex-row md:gap-10 gap-8 mt-12">
-          <aside className="w-full md:max-w-[270px] flex-shrink-0">
-            <div className="flex flex-col items-center md:items-start">
-              <Image
-                src={profile.avatar}
-                alt={profile.name}
-                width={112}
-                height={112}
-                className="w-28 h-28 rounded-full border border-gray-700 object-cover mb-3"
-              />
-              <span className="text-white font-bold text-2xl leading-6">{profile.name}</span>
-              <span className="text-gray-400 text-base mb-2">@{profile.github}</span>
-              <p className="text-sm text-white/80 mt-1 mb-2 text-center md:text-left min-h-[28px]">
-                {profile.headline}
+    <div className="relative py-20 min-h-[80vh] overflow-hidden">
+      {/* Multiple Background highlights */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* Top center highlight */}
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] opacity-15"
+          style={{
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%)',
+          }}
+        />
+        {/* Left side highlight */}
+        <div
+          className="absolute top-1/3 left-0 w-[600px] h-[500px] opacity-10"
+          style={{
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 60%)',
+          }}
+        />
+        {/* Right side highlight */}
+        <div
+          className="absolute bottom-1/4 right-0 w-[700px] h-[600px] opacity-10"
+          style={{
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, transparent 65%)',
+          }}
+        />
+      </div>
+
+      <div className="container max-w-5xl mx-auto px-2 md:px-6 relative">
+        <div className="flex flex-col gap-8 mt-24 px-4">
+          <div className="flex-1 min-w-0">
+            <div className="mb-24 text-center">
+              <Image src={GlobeImage} alt="Globe" className="mx-auto mb-8 rounded-lg" width={160} />
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight font-serif">
+                The journey of me
+              </h1>
+              <p className="text-white/70 text-base max-w-2xl mx-auto leading-relaxed">
+                I build software that scales both technically and across borders. From dashboards used by top management
+                to enterprise systems supporting international operations, I&apos;ve spent my career bridging the gap
+                between beautiful interfaces and scalable architecture. I&apos;m all about writing code that&apos;s not
+                just functional, but maintainable, and performant. Currently collaborating with Korean dev teams,
+                I&apos;m living proof that good communication and clean code go hand in hand.
               </p>
-              <div className="flex items-center gap-2 my-1">
-                <a
-                  href={`mailto:${profile.email}`}
-                  aria-label="Email"
-                  className="hover:text-emerald-400 text-white/70 text-xl"
-                >
-                  ✉️
-                </a>
-                <a
-                  href={`https://github.com/${profile.github}`}
-                  aria-label="GitHub"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-emerald-400 text-white/70 text-xl"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                </a>
-                <a
-                  href={`https://linkedin.com/in/${profile.linkedin}`}
-                  aria-label="LinkedIn"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-sky-400 text-white/70 text-xl"
-                >
-                  in
-                </a>
-              </div>
-              <div className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                <svg width="16" height="16" fill="currentColor" className="inline align-middle">
-                  <circle cx="8" cy="8" r="7" stroke="#34495e" strokeWidth="2" fill="#16a34a80" />
-                </svg>
-                {profile.location}
-              </div>
-              <div className="flex flex-wrap gap-2 mt-3 w-full">
-                {highlights.map((h) => (
-                  <span
-                    key={h.label}
-                    className="bg-gray-900 border border-gray-800 text-[12px] px-2 py-1 rounded mt-1 text-gray-300"
-                  >
-                    <span className="font-bold text-emerald-300">{h.value}</span>{' '}
-                    <span className="text-gray-500 font-normal">{h.label}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </aside>
-
-          <main className="flex-1 min-w-0">
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-white mb-1">Overview</h2>
-              <p className="text-white/70 text-sm leading-6">{profile.summary}</p>
             </div>
 
-            <div className="mb-8">
-              <h3 className="text-base text-gray-300 font-semibold mb-2">Tech Stack</h3>
-              <div className="overflow-x-scroll">
-                <ToolboxItems items={TOOLBOX_ITEMS} className="gap-3" />
+            {/* Curved Image Cards - Piled -> Spread on hover */}
+            <div className="relative mb-32 flex justify-center items-center" style={{ perspective: '1000px' }}>
+              <div
+                className={
+                  isMobile
+                    ? 'relative w-full h-72 flex items-center justify-center'
+                    : `flex justify-center items-end transition-all duration-700 ${
+                        groupHovered ? 'gap-6 md:gap-8' : '-space-x-8 md:-space-x-10'
+                      }`
+                }
+                onMouseEnter={() => !isMobile && setGroupHovered(true)}
+                onMouseLeave={() => {
+                  if (!isMobile) {
+                    setGroupHovered(false);
+                    setHoveredCard(null);
+                  }
+                }}
+              >
+                {cards.map((src, idx) => {
+                  const total = cards.length;
+                  const layer = total - idx - 1; // 0 = top card
+                  const isTop = layer === 0;
+                  const isHoveredCard = hoveredCard === idx;
+                  const applyHover = !isMobile && isHoveredCard;
+
+                  // base visual offsets for stack
+                  const baseY = layer * 10;
+                  const baseScale = 1 - layer * 0.02;
+                  const baseRotate = (layer - (total - 1) / 2) * 6;
+
+                  // compute drag-influenced transforms for underlying cards
+                  const progress = Math.min(Math.abs(dragX) / swipeThreshold, 1);
+                  const dir = dragX === 0 ? 1 : Math.sign(dragX);
+                  const staggerFactor = Math.max(0, 1 - layer * 0.22);
+                  const eased = progress * staggerFactor;
+                  const revealX = 18;
+                  const revealY = 8;
+
+                  const animX = isTop ? 0 : dir * eased * layer * revealX;
+                  const animY = isTop ? 0 : -eased * layer * revealY;
+                  const animRotate = isTop ? 0 : dir * eased * (layer * 2);
+                  const animScale = isTop ? 1 : 1 - layer * 0.015 + eased * 0.02;
+
+                  // When on mobile we render an outer wrapper that centers via CSS (left:50% + translateX(-50%)).
+                  // The inner motion.div will animate an x offset relative to that centered origin so
+                  // the card remains visually centered baseline while being draggable.
+                  if (isMobile) {
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          position: 'absolute',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          zIndex: 100 + idx,
+                        }}
+                      >
+                        <motion.div
+                          className="relative w-56 md:w-48 h-72 md:h-60 flex-shrink-0 cursor-pointer"
+                          layout={false}
+                          drag={isTop ? 'x' : undefined}
+                          dragElastic={0.2}
+                          dragConstraints={{ left: 0, right: 0 }}
+                          onDrag={(e, info) => {
+                            if (!isTop) return;
+                            setDragX(info.offset.x);
+                          }}
+                          onDragEnd={(e, info) => {
+                            if (!isTop) return;
+                            handleDragEnd(info.offset.x, info.velocity.x);
+                          }}
+                          whileDrag={isTop ? { scale: 1.02 } : undefined}
+                          animate={
+                            isTop
+                              ? topControls
+                              : { x: animX, y: baseY + animY, rotateY: animRotate + baseRotate, scale: animScale }
+                          }
+                          transition={isTop ? undefined : { type: 'spring', stiffness: 300, damping: 30 }}
+                          style={{ position: 'relative' }}
+                        >
+                          <div
+                            className={`relative w-full h-full rounded-2xl overflow-hidden border-2 border-gray-800/50 shadow-2xl transition-all duration-300`}
+                          >
+                            <Image
+                              src={src}
+                              alt={`About image ${idx + 1}`}
+                              fill
+                              className={`object-cover transition-all duration-700 ${applyHover ? 'scale-110 brightness-110' : 'scale-100 brightness-75'}`}
+                            />
+                            <div
+                              className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 ${applyHover ? 'opacity-90' : 'opacity-50'}`}
+                            />
+                            <div
+                              className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/30 to-white/0 transition-transform duration-700"
+                              style={{ transform: applyHover ? 'translateX(100%)' : 'translateX(-100%)' }}
+                            />
+                          </div>
+                        </motion.div>
+                      </div>
+                    );
+                  }
+
+                  // Desktop / tablet: allow hover to bring card visually forward
+                  const zIndex = isHoveredCard ? 2000 : 100 + idx;
+                  return (
+                    <motion.div
+                      key={idx}
+                      className="relative w-56 md:w-48 h-72 md:h-60 flex-shrink-0 cursor-pointer"
+                      style={{ zIndex }}
+                      layout={false}
+                      drag={isTop ? 'x' : undefined}
+                      dragElastic={0.2}
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDrag={(e, info) => {
+                        if (!isTop) return;
+                        setDragX(info.offset.x);
+                      }}
+                      onDragEnd={(e, info) => {
+                        if (!isTop) return;
+                        handleDragEnd(info.offset.x, info.velocity.x);
+                      }}
+                      onMouseEnter={() => !isMobile && setHoveredCard(idx)}
+                      onMouseLeave={() => !isMobile && setHoveredCard(null)}
+                      whileDrag={isTop ? { scale: 1.02 } : undefined}
+                      animate={
+                        isTop
+                          ? topControls
+                          : { x: animX, y: baseY + animY, rotateY: animRotate + baseRotate, scale: animScale }
+                      }
+                      transition={isTop ? undefined : { type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                      <div
+                        className={`relative w-full h-full rounded-2xl overflow-hidden border-2 border-gray-800/50 shadow-2xl transition-all duration-500 hover:border-emerald-500/50 hover:shadow-emerald-500/30`}
+                      >
+                        <Image
+                          src={src}
+                          alt={`About image ${idx + 1}`}
+                          fill
+                          className={`object-cover transition-all duration-700 ${applyHover ? 'scale-110 brightness-110' : 'scale-100 brightness-75'}`}
+                        />
+                        {/* Gradient overlay */}
+                        <div
+                          className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 ${applyHover ? 'opacity-90' : 'opacity-50'}`}
+                        />
+                        {/* Shine effect */}
+                        <div
+                          className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/30 to-white/0 transition-transform duration-700"
+                          style={{
+                            transform: applyHover ? 'translateX(100%)' : 'translateX(-100%)',
+                          }}
+                        />
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
 
-            <div className="mb-2">
-              <h3 className="text-base text-gray-300 font-semibold mb-3">Experience</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {experiences.map((exp, idx) => (
-                  <div key={idx} className="rounded-lg border border-gray-800 bg-gray-900 p-4 flex flex-col gap-1">
-                    <span className="font-semibold text-white text-base">{exp.job}</span>
-                    <span className="text-emerald-400 text-sm">{exp.company}</span>
-                    <span className="text-xs text-gray-400 mb-1">
-                      {exp.period} • {exp.location}
-                    </span>
-                    <span className="text-xs text-white/70 leading-5">{exp.description}</span>
+            <div className="text-center mb-16">
+              <span className="block text-emerald-400 font-semibold text-xs uppercase tracking-widest mb-3">
+                MY EXPERIENCES
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-white font-serif">Where I&apos;ve Been Employed</h2>
+            </div>
+
+            {/* New Experience Layout - Horizontal */}
+            <div className="mb-20 space-y-12">
+              {experiences.map((exp, idx) => (
+                <div
+                  key={idx}
+                  className="group border-b border-gray-800/30 pb-12 last:border-b-0 transition-all duration-300 hover:border-emerald-500/20"
+                >
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                    {/* Left: Job Title and Company */}
+                    <div className="md:w-1/3">
+                      <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-emerald-400 transition-colors duration-300">
+                        {exp.job}, <span className="text-emerald-400">{exp.company}</span>
+                      </h3>
+                      <p className="text-xs text-gray-500 italic">
+                        {exp.period} / {exp.location}
+                      </p>
+                    </div>
+
+                    {/* Right: Description */}
+                    <div className="md:w-2/3">
+                      <p className="text-sm text-white/70 leading-relaxed group-hover:text-white/90 transition-colors duration-300">
+                        {exp.description}
+                      </p>
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          </main>
+          </div>
         </div>
       </div>
     </div>
