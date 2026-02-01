@@ -4,12 +4,28 @@ import GlobeImage from '@/assets/images/journey.png';
 import { ABOUT_IMAGES } from '@/constants/aboutImages';
 import { useAboutData } from '@/hooks/usePortfolio';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const AboutSection = () => {
-  const { profile, experiences, highlights, loading, error } = useAboutData();
+  const { profile, experiences, loading, error } = useAboutData();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [groupHovered, setGroupHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [cards, setCards] = useState(ABOUT_IMAGES.slice());
+  const dragState = useRef({
+    active: false,
+    startX: 0,
+    dx: 0,
+  });
+  const [, forceRerender] = useState(0); // used to trigger render for drag updates
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Loading state
   if (loading) {
@@ -65,58 +81,149 @@ export const AboutSection = () => {
                 The journey of me
               </h1>
               <p className="text-white/70 text-base max-w-2xl mx-auto leading-relaxed">
-                Hey, I&apos;m Nabil! I build software that scales both technically and across borders. From dashboards
-                used by top management to enterprise systems supporting international operations, I&apos;ve spent my
-                career bridging the gap between beautiful interfaces and scalable architecture. I&apos;m all about
-                writing code that&apos;s not just functional, but maintainable, and performant. Currently collaborating
-                with Korean dev teams at Hyundai AutoEver, I&apos;m living proof that good communication and clean code
-                go hand in hand.
+                I build software that scales both technically and across borders. From dashboards used by top management
+                to enterprise systems supporting international operations, I&apos;ve spent my career bridging the gap
+                between beautiful interfaces and scalable architecture. I&apos;m all about writing code that&apos;s not
+                just functional, but maintainable, and performant. Currently collaborating with Korean dev teams,
+                I&apos;m living proof that good communication and clean code go hand in hand.
               </p>
             </div>
 
             {/* Curved Image Cards - Piled -> Spread on hover */}
             <div className="relative mb-32 flex justify-center items-center" style={{ perspective: '1000px' }}>
               <div
-                className={`flex justify-center items-end transition-all duration-500 ${
-                  groupHovered ? 'gap-6 md:gap-8' : '-space-x-8 md:-space-x-10'
-                }`}
-                onMouseEnter={() => setGroupHovered(true)}
+                className={
+                  isMobile
+                    ? 'relative w-full h-72 flex items-center justify-center'
+                    : `flex justify-center items-end transition-all duration-500 ${
+                        groupHovered ? 'gap-6 md:gap-8' : '-space-x-8 md:-space-x-10'
+                      }`
+                }
+                onMouseEnter={() => !isMobile && setGroupHovered(true)}
                 onMouseLeave={() => {
-                  setGroupHovered(false);
-                  setHoveredCard(null);
+                  if (!isMobile) {
+                    setGroupHovered(false);
+                    setHoveredCard(null);
+                  }
                 }}
               >
-                {ABOUT_IMAGES.map((src, idx) => {
-                  const totalCards = ABOUT_IMAGES.length;
-                  const middleIndex = Math.floor(totalCards / 2);
-                  const offset = idx - middleIndex;
+                {cards.map((src, idx) => {
+                  const total = cards.length;
+                  const layer = total - idx - 1; // 0 = top card
 
-                  // Calculate rotation and translation for curve effect
-                  const rotateY = offset * 8; // degrees
-                  const baseTranslateZ = -Math.abs(offset) * 20; // pixels (3D depth)
-                  const spreadGap = 8; // px when group is hovered
-                  const smallOverlap = 12; // px overlap when not hovered
-                  const translateX = groupHovered ? offset * spreadGap : offset * smallOverlap;
-                  const translateZ = hoveredCard === idx ? 50 : baseTranslateZ;
-                  const scale = hoveredCard === idx ? 1.08 : 1 - Math.abs(offset) * 0.04;
-                  const isHovered = hoveredCard === idx;
-                  const baseZ = idx + 1; // pile order: card 1 -> z-index 1, etc.
-                  const zIndex = isHovered ? 1000 : baseZ;
-                  // staggered transition delay for nicer spread animation
-                  const transitionDelay = `${Math.abs(offset) * 40}ms`;
+                  // Responsive placement: arc on desktop, swipe-stack on both
+                  let rotateY = (layer - (total - 1) / 2) * 6; // gentler rotate based on layer
+                  let translateZ = -layer * 14; // depth per layer
+                  let translateX = 0;
+                  let translateY = 0;
+                  let scale = 1 - layer * 0.02;
+                  let isTop = layer === 0;
+                  let isHoveredCard = hoveredCard === idx;
+                  const isHovered = isHoveredCard;
+                  let zIndex = 100 + idx;
+                  let transitionDelay = `${layer * 40}ms`;
+
+                  // If user is dragging, top card follows pointer and underlying cards open progressively
+                  if (dragState.current.active) {
+                    const dx = dragState.current.dx;
+                    const threshold = 120;
+                    const progress = Math.min(Math.abs(dx) / threshold, 1);
+                    const dir = dx === 0 ? 1 : Math.sign(dx);
+
+                    if (isTop) {
+                      translateX = dx;
+                      rotateY = dx / 20; // rotate as you drag
+                      zIndex = 1000;
+                      scale = 1.02;
+                      transitionDelay = '0ms';
+                    } else {
+                      // underlying cards open progressively based on drag progress
+                      const revealX = 18; // horizontal reveal per layer
+                      const revealY = 8; // vertical lift per layer
+                      const layerOffset = layer; // distance from top
+                      const staggerFactor = Math.max(0, 1 - layerOffset * 0.22);
+                      const eased = progress * staggerFactor;
+                      translateX = dir * eased * layerOffset * revealX;
+                      translateY = -eased * layerOffset * revealY;
+                      rotateY = dir * eased * (layerOffset * 2);
+                      scale = 1 - layer * 0.015 + eased * 0.02;
+                      transitionDelay = `${layerOffset * 40}ms`;
+                    }
+                  }
 
                   return (
                     <div
                       key={idx}
-                      className="relative w-32 md:w-48 h-40 md:h-60 flex-shrink-0 cursor-pointer transition-all duration-500"
+                      className="relative w-56 md:w-48 h-72 md:h-60 flex-shrink-0 cursor-pointer transition-all duration-500"
                       style={{
-                        transform: `translateX(${translateX}px) rotateY(${isHovered ? 0 : rotateY}deg) translateZ(${translateZ}px) translateY(${isHovered ? -18 : 0}px) scale(${scale})`,
+                        position: isMobile ? ('absolute' as const) : undefined,
+                        left: isMobile ? '50%' : undefined,
+                        transform: isMobile
+                          ? `translateX(calc(-50% + ${translateX}px)) rotateY(${isHovered ? 0 : rotateY}deg) translateZ(${translateZ}px) translateY(${
+                              layer * 10 + translateY + (isHovered ? -18 : 0)
+                            }px) scale(${scale})`
+                          : `translateX(${translateX}px) rotateY(${isHovered ? 0 : rotateY}deg) translateZ(${translateZ}px) translateY(${isHovered ? -18 : 0}px) scale(${scale})`,
                         transformStyle: 'preserve-3d',
                         zIndex,
                         transitionDelay,
                       }}
-                      onMouseEnter={() => setHoveredCard(idx)}
-                      onMouseLeave={() => setHoveredCard(null)}
+                      ref={(el) => {
+                        cardRefs.current[idx] = el;
+                      }}
+                      onMouseEnter={() => !isMobile && setHoveredCard(idx)}
+                      onMouseLeave={() => !isMobile && setHoveredCard(null)}
+                      onClick={() => {
+                        if (isMobile) {
+                          setHoveredCard((prev) => (prev === idx ? null : idx));
+                          // scroll selected card into view
+                          setTimeout(() => {
+                            cardRefs.current[idx]?.scrollIntoView({
+                              behavior: 'smooth',
+                              inline: 'center',
+                              block: 'nearest',
+                            });
+                          }, 80);
+                        }
+                      }}
+                      onPointerDown={(e: any) => {
+                        if (!isTop) return;
+                        dragState.current.active = true;
+                        dragState.current.startX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+                        dragState.current.dx = 0;
+                        try {
+                          e.currentTarget.setPointerCapture?.(e.pointerId);
+                        } catch {}
+                      }}
+                      onPointerMove={(e: any) => {
+                        if (!dragState.current.active || !isTop) return;
+                        const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+                        dragState.current.dx = clientX - dragState.current.startX;
+                        forceRerender((n) => n + 1);
+                      }}
+                      onPointerUp={(e: any) => {
+                        if (!dragState.current.active || !isTop) return;
+                        dragState.current.active = false;
+                        const dx = dragState.current.dx;
+                        const threshold = 120;
+                        if (Math.abs(dx) > threshold) {
+                          const direction = dx > 0 ? 1 : -1;
+                          dragState.current.dx = direction * (window.innerWidth + 200);
+                          forceRerender((n) => n + 1);
+                          setTimeout(() => {
+                            setCards((prev) => {
+                              const copy = [...prev];
+                              const swiped = copy.pop();
+                              if (swiped) copy.unshift(swiped);
+                              return copy;
+                            });
+                            dragState.current.dx = 0;
+                            forceRerender((n) => n + 1);
+                          }, 300);
+                        } else {
+                          dragState.current.dx = 0;
+                          forceRerender((n) => n + 1);
+                        }
+                      }}
                     >
                       <div
                         className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-gray-800/50 shadow-2xl
@@ -167,7 +274,7 @@ export const AboutSection = () => {
                     {/* Left: Job Title and Company */}
                     <div className="md:w-1/3">
                       <h3 className="text-xl font-semibold text-white mb-1 group-hover:text-emerald-400 transition-colors duration-300">
-                        Product Designer, <span className="text-emerald-400">{exp.company}</span>
+                        {exp.job}, <span className="text-emerald-400">{exp.company}</span>
                       </h3>
                       <p className="text-xs text-gray-500 italic">
                         {exp.period} / {exp.location}
