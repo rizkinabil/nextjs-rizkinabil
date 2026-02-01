@@ -11,19 +11,25 @@ import { useTestimonials } from '@/hooks/usePortfolio';
 import { cn } from '@/utils/cn';
 
 export const TestimonialsSection = () => {
-  const contentCardRef = useRef<HTMLDivElement>(null);
+  const COLLAPSED_PX = 56; // collapsed preview height (~3.5rem)
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  // Toggle automatic sliding (set to false to disable auto-slide)
+  const AUTO_SLIDE = false;
   const { data: testimonials, loading: testimonialsLoading, error: testimonialFailed } = useTestimonials();
 
   const [isHovered, setIsHovered] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isOverflowing, setIsOverflowing] = useState(false);
+  // per-card expand state handled via expandedIndex
+  const [overflowMap, setOverflowMap] = useState<Record<number, boolean>>({});
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const contentRefs = useRef<Record<number, HTMLParagraphElement | null>>({});
+  const [isScrollable, setIsScrollable] = useState(false);
+  const [cardStep, setCardStep] = useState<number | null>(null);
 
   const handleScroll = (direction: 'left' | 'right') => {
     const container = scrollRef.current;
     if (!container) return;
 
-    const STEP = 320;
+    const STEP = cardStep ?? 320;
     const delta = direction === 'left' ? -STEP : STEP;
 
     container.scrollBy({ left: delta, behavior: 'smooth' });
@@ -31,19 +37,21 @@ export const TestimonialsSection = () => {
 
   // auto-scroll logic
   useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
+    if (!AUTO_SLIDE) return; // auto-slide disabled
 
-    const STEP = 320; // how far the scroll will move (px)
+    const container = scrollRef.current;
+    if (!container || !isScrollable) return;
+
     const INTERVAL = 3000; // interval in (ms)
 
     const id = setInterval(() => {
       if (isHovered) return;
 
       const maxScroll = container.scrollWidth - container.clientWidth;
+      const STEP = cardStep ?? 320;
 
-      if (container.scrollLeft + STEP >= maxScroll - 10) {
-        // back to start in loop
+      if (container.scrollLeft + STEP >= maxScroll - 4) {
+        // smoothly go back to start
         container.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
         container.scrollBy({ left: STEP, behavior: 'smooth' });
@@ -51,22 +59,48 @@ export const TestimonialsSection = () => {
     }, INTERVAL);
 
     return () => clearInterval(id);
-  }, [isHovered]);
+  }, [isHovered, isScrollable, cardStep, AUTO_SLIDE]);
 
+  // Check per-card overflow (for the testimonial text) and whether the list is scrollable.
   useEffect(() => {
-    const checkOverflow = () => {
-      if (contentCardRef.current) {
-        // Check if the actual content height is greater than the limit
-        const hasOverflow = contentCardRef.current.offsetHeight > 200;
-        setIsOverflowing(hasOverflow);
+    const check = () => {
+      const container = scrollRef.current;
+      if (!container) return;
+
+      // is horizontally scrollable?
+      setIsScrollable(container.scrollWidth > container.clientWidth + 1);
+
+      // compute card step using the first child width + gap (fallback to 320)
+      const inner = container.firstElementChild as HTMLElement | null;
+      if (inner && inner.children.length > 0) {
+        const first = inner.children[0] as HTMLElement;
+        const style = window.getComputedStyle(inner);
+        const gap = parseFloat(style.gap || '0') || 32;
+        const step = Math.round(first.getBoundingClientRect().width + gap);
+        setCardStep(step);
+      } else {
+        setCardStep(320);
       }
+
+      // For each testimonial text element, determine if it would overflow a collapsed height.
+      const COLLAPSED_PX = 56; // ~3.5rem, approx two lines
+      const map: Record<number, boolean> = {};
+      testimonials?.forEach((t, idx) => {
+        const el = contentRefs.current[idx];
+        if (!el) {
+          map[idx] = false;
+          return;
+        }
+        // if full scrollHeight exceeds the collapsed visible height, mark as overflowing
+        map[idx] = el.scrollHeight > COLLAPSED_PX + 1;
+      });
+      setOverflowMap(map);
     };
 
-    checkOverflow();
-    // Re-check on window resize in case layout shifts
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
-  }, [contentCardRef]);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, [testimonials]);
 
   if (testimonialsLoading) {
     console.log('loading here');
@@ -123,35 +157,39 @@ export const TestimonialsSection = () => {
           transition={{ duration: 0.8 }}
         >
           <div className="relative">
-            <button
-              type="button"
-              onClick={() => handleScroll('left')}
-              className="
-                hidden md:flex
-                absolute left-0 top-1/2 -translate-y-1/2 z-10
-                h-10 w-10 rounded-full
-                bg-[#020817]/80 border border-white/20
-                items-center justify-center
-                hover:bg-white/10 transition
-              "
-            >
-              <ChevronLeft className="size-5 text-white" />
-            </button>
+            {isScrollable && (
+              <button
+                type="button"
+                onClick={() => handleScroll('left')}
+                className="
+                  hidden md:flex
+                  absolute left-0 top-1/2 -translate-y-1/2 z-10
+                  h-10 w-10 rounded-full
+                  bg-[#020817]/80 border border-white/20
+                  items-center justify-center
+                  hover:bg-white/10 transition
+                "
+              >
+                <ChevronLeft className="size-5 text-white" />
+              </button>
+            )}
 
-            <button
-              type="button"
-              onClick={() => handleScroll('right')}
-              className="
-                hidden md:flex
-                absolute right-0 top-1/2 -translate-y-1/2 z-10
-                h-10 w-10 rounded-full
-                bg-[#020817]/80 border border-white/20
-                items-center justify-center
-                hover:bg-white/10 transition
-              "
-            >
-              <ChevronRight className="size-5 text-white" />
-            </button>
+            {isScrollable && (
+              <button
+                type="button"
+                onClick={() => handleScroll('right')}
+                className="
+                  hidden md:flex
+                  absolute right-0 top-1/2 -translate-y-1/2 z-10
+                  h-10 w-10 rounded-full
+                  bg-[#020817]/80 border border-white/20
+                  items-center justify-center
+                  hover:bg-white/10 transition
+                "
+              >
+                <ChevronRight className="size-5 text-white" />
+              </button>
+            )}
 
             {/* area scroll */}
             <div
@@ -164,7 +202,7 @@ export const TestimonialsSection = () => {
                 hide-scrollbar
               "
             >
-              <div className="flex gap-8 flex-none pr-8 animate-scroll hover:[animation-play-state:paused] cursor-pointer">
+              <div className="flex gap-8 flex-none pr-8 hover:[animation-play-state:paused] cursor-pointer">
                 {testimonials?.map((testimonial, index) => (
                   <motion.div
                     key={`${testimonial.name}-${index}`}
@@ -173,7 +211,7 @@ export const TestimonialsSection = () => {
                     className="flex-shrink-0"
                   >
                     <Card
-                      className="p-6 max-w-xs md:max-w-md md:p-8 transition-transform bg-[#020817]/70 border border-white/10 backdrop-blur-xl"
+                      className="p-6 w-80 md:w-96 md:p-8 transition-transform bg-[#020817]/70 border border-white/10 backdrop-blur-xl"
                       source={testimonial.source}
                     >
                       <div className="flex gap-4 items-center">
@@ -182,25 +220,35 @@ export const TestimonialsSection = () => {
                         </div>
                         <div>
                           <div className="font-semibold">{testimonial.name}</div>
-                          <div
-                            ref={contentCardRef}
-                            className="text-sm text-muted-foreground truncate overflow-hidden whitespace-nowrap w-64"
-                          >
-                            {testimonial.position}
-                          </div>
-                          {/* Expand/Collapse Toggle */}
-                          {isOverflowing && (
-                            <button
-                              onClick={() => setIsExpanded(!isExpanded)}
-                              className="mt-4 flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
-                            >
-                              <span>{isExpanded ? 'Show Less' : 'Read More'}</span>
-                              <ChevronDown className={cn('w-4 h-4 transition-transform', isExpanded && 'rotate-180')} />
-                            </button>
-                          )}
+                          <div className="text-sm text-muted-foreground">{testimonial.position}</div>
                         </div>
                       </div>
-                      <p className="mt-4 md:mt-6 text-sm md:text-base text-muted-foreground">{testimonial.text}</p>
+                      <p
+                        ref={(el) => {
+                          contentRefs.current[index] = el;
+                        }}
+                        className="mt-4 md:mt-6 text-sm md:text-base text-muted-foreground"
+                        style={{
+                          maxHeight: expandedIndex === index ? undefined : `${COLLAPSED_PX}px`,
+                          overflow: 'hidden',
+                          transition: 'max-height 300ms ease',
+                        }}
+                      >
+                        {testimonial.text}
+                      </p>
+
+                      {/* Expand/Collapse Toggle (per-card) */}
+                      {overflowMap[index] && (
+                        <button
+                          onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                          className="mt-4 flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
+                        >
+                          <span>{expandedIndex === index ? 'Show Less' : 'Read More'}</span>
+                          <ChevronDown
+                            className={cn('w-4 h-4 transition-transform', expandedIndex === index && 'rotate-180')}
+                          />
+                        </button>
+                      )}
                     </Card>
                   </motion.div>
                 ))}

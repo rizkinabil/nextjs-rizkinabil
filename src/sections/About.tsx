@@ -3,22 +3,53 @@
 import GlobeImage from '@/assets/images/journey.png';
 import { ABOUT_IMAGES } from '@/constants/aboutImages';
 import { useAboutData } from '@/hooks/usePortfolio';
+import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const AboutSection = () => {
   const { profile, experiences, loading, error } = useAboutData();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [groupHovered, setGroupHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [cards, setCards] = useState(ABOUT_IMAGES.slice());
-  const dragState = useRef({
-    active: false,
-    startX: 0,
-    dx: 0,
-  });
-  const [, forceRerender] = useState(0); // used to trigger render for drag updates
+  // framer-motion controls for the top card
+  const topControls = useAnimation();
+  const [dragX, setDragX] = useState(0);
+  const swipeThreshold = 120; // px
+
+  const handleDragEnd = async (offsetX: number, velocityX: number) => {
+    const dir = offsetX > 0 ? 1 : -1;
+    const passed = Math.abs(offsetX) > swipeThreshold || Math.abs(velocityX) > 500;
+    const animDistance = dir * (window.innerWidth + 300);
+
+    if (passed) {
+      // fly off
+      await topControls.start({
+        x: animDistance,
+        rotate: dir * 30,
+        transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+      });
+      // reorder based on direction: right -> next, left -> previous
+      setCards((prev) => {
+        const copy = [...prev];
+        if (dir > 0) {
+          const first = copy.shift();
+          if (first) copy.push(first);
+        } else {
+          const last = copy.pop();
+          if (last) copy.unshift(last);
+        }
+        return copy;
+      });
+      // reset transform instantly
+      await topControls.set({ x: 0, rotate: 0 });
+    } else {
+      // snap back with spring
+      await topControls.start({ x: 0, rotate: 0, transition: { type: 'spring', stiffness: 300, damping: 30 } });
+    }
+    setDragX(0);
+  };
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -95,7 +126,7 @@ export const AboutSection = () => {
                 className={
                   isMobile
                     ? 'relative w-full h-72 flex items-center justify-center'
-                    : `flex justify-center items-end transition-all duration-500 ${
+                    : `flex justify-center items-end transition-all duration-700 ${
                         groupHovered ? 'gap-6 md:gap-8' : '-space-x-8 md:-space-x-10'
                       }`
                 }
@@ -110,147 +141,138 @@ export const AboutSection = () => {
                 {cards.map((src, idx) => {
                   const total = cards.length;
                   const layer = total - idx - 1; // 0 = top card
+                  const isTop = layer === 0;
+                  const isHoveredCard = hoveredCard === idx;
+                  const applyHover = !isMobile && isHoveredCard;
 
-                  // Responsive placement: arc on desktop, swipe-stack on both
-                  let rotateY = (layer - (total - 1) / 2) * 6; // gentler rotate based on layer
-                  let translateZ = -layer * 14; // depth per layer
-                  let translateX = 0;
-                  let translateY = 0;
-                  let scale = 1 - layer * 0.02;
-                  let isTop = layer === 0;
-                  let isHoveredCard = hoveredCard === idx;
-                  const isHovered = isHoveredCard;
-                  let zIndex = 100 + idx;
-                  let transitionDelay = `${layer * 40}ms`;
+                  // base visual offsets for stack
+                  const baseY = layer * 10;
+                  const baseScale = 1 - layer * 0.02;
+                  const baseRotate = (layer - (total - 1) / 2) * 6;
 
-                  // If user is dragging, top card follows pointer and underlying cards open progressively
-                  if (dragState.current.active) {
-                    const dx = dragState.current.dx;
-                    const threshold = 120;
-                    const progress = Math.min(Math.abs(dx) / threshold, 1);
-                    const dir = dx === 0 ? 1 : Math.sign(dx);
+                  // compute drag-influenced transforms for underlying cards
+                  const progress = Math.min(Math.abs(dragX) / swipeThreshold, 1);
+                  const dir = dragX === 0 ? 1 : Math.sign(dragX);
+                  const staggerFactor = Math.max(0, 1 - layer * 0.22);
+                  const eased = progress * staggerFactor;
+                  const revealX = 18;
+                  const revealY = 8;
 
-                    if (isTop) {
-                      translateX = dx;
-                      rotateY = dx / 20; // rotate as you drag
-                      zIndex = 1000;
-                      scale = 1.02;
-                      transitionDelay = '0ms';
-                    } else {
-                      // underlying cards open progressively based on drag progress
-                      const revealX = 18; // horizontal reveal per layer
-                      const revealY = 8; // vertical lift per layer
-                      const layerOffset = layer; // distance from top
-                      const staggerFactor = Math.max(0, 1 - layerOffset * 0.22);
-                      const eased = progress * staggerFactor;
-                      translateX = dir * eased * layerOffset * revealX;
-                      translateY = -eased * layerOffset * revealY;
-                      rotateY = dir * eased * (layerOffset * 2);
-                      scale = 1 - layer * 0.015 + eased * 0.02;
-                      transitionDelay = `${layerOffset * 40}ms`;
-                    }
+                  const animX = isTop ? 0 : dir * eased * layer * revealX;
+                  const animY = isTop ? 0 : -eased * layer * revealY;
+                  const animRotate = isTop ? 0 : dir * eased * (layer * 2);
+                  const animScale = isTop ? 1 : 1 - layer * 0.015 + eased * 0.02;
+
+                  // When on mobile we render an outer wrapper that centers via CSS (left:50% + translateX(-50%)).
+                  // The inner motion.div will animate an x offset relative to that centered origin so
+                  // the card remains visually centered baseline while being draggable.
+                  if (isMobile) {
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          position: 'absolute',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          zIndex: 100 + idx,
+                        }}
+                      >
+                        <motion.div
+                          className="relative w-56 md:w-48 h-72 md:h-60 flex-shrink-0 cursor-pointer"
+                          layout={false}
+                          drag={isTop ? 'x' : undefined}
+                          dragElastic={0.2}
+                          dragConstraints={{ left: 0, right: 0 }}
+                          onDrag={(e, info) => {
+                            if (!isTop) return;
+                            setDragX(info.offset.x);
+                          }}
+                          onDragEnd={(e, info) => {
+                            if (!isTop) return;
+                            handleDragEnd(info.offset.x, info.velocity.x);
+                          }}
+                          whileDrag={isTop ? { scale: 1.02 } : undefined}
+                          animate={
+                            isTop
+                              ? topControls
+                              : { x: animX, y: baseY + animY, rotateY: animRotate + baseRotate, scale: animScale }
+                          }
+                          transition={isTop ? undefined : { type: 'spring', stiffness: 300, damping: 30 }}
+                          style={{ position: 'relative' }}
+                        >
+                          <div
+                            className={`relative w-full h-full rounded-2xl overflow-hidden border-2 border-gray-800/50 shadow-2xl transition-all duration-300`}
+                          >
+                            <Image
+                              src={src}
+                              alt={`About image ${idx + 1}`}
+                              fill
+                              className={`object-cover transition-all duration-700 ${applyHover ? 'scale-110 brightness-110' : 'scale-100 brightness-75'}`}
+                            />
+                            <div
+                              className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 ${applyHover ? 'opacity-90' : 'opacity-50'}`}
+                            />
+                            <div
+                              className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/30 to-white/0 transition-transform duration-700"
+                              style={{ transform: applyHover ? 'translateX(100%)' : 'translateX(-100%)' }}
+                            />
+                          </div>
+                        </motion.div>
+                      </div>
+                    );
                   }
 
+                  // Desktop / tablet: allow hover to bring card visually forward
+                  const zIndex = isHoveredCard ? 2000 : 100 + idx;
                   return (
-                    <div
+                    <motion.div
                       key={idx}
-                      className="relative w-56 md:w-48 h-72 md:h-60 flex-shrink-0 cursor-pointer transition-all duration-500"
-                      style={{
-                        position: isMobile ? ('absolute' as const) : undefined,
-                        left: isMobile ? '50%' : undefined,
-                        transform: isMobile
-                          ? `translateX(calc(-50% + ${translateX}px)) rotateY(${isHovered ? 0 : rotateY}deg) translateZ(${translateZ}px) translateY(${
-                              layer * 10 + translateY + (isHovered ? -18 : 0)
-                            }px) scale(${scale})`
-                          : `translateX(${translateX}px) rotateY(${isHovered ? 0 : rotateY}deg) translateZ(${translateZ}px) translateY(${isHovered ? -18 : 0}px) scale(${scale})`,
-                        transformStyle: 'preserve-3d',
-                        zIndex,
-                        transitionDelay,
+                      className="relative w-56 md:w-48 h-72 md:h-60 flex-shrink-0 cursor-pointer"
+                      style={{ zIndex }}
+                      layout={false}
+                      drag={isTop ? 'x' : undefined}
+                      dragElastic={0.2}
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDrag={(e, info) => {
+                        if (!isTop) return;
+                        setDragX(info.offset.x);
                       }}
-                      ref={(el) => {
-                        cardRefs.current[idx] = el;
+                      onDragEnd={(e, info) => {
+                        if (!isTop) return;
+                        handleDragEnd(info.offset.x, info.velocity.x);
                       }}
                       onMouseEnter={() => !isMobile && setHoveredCard(idx)}
                       onMouseLeave={() => !isMobile && setHoveredCard(null)}
-                      onClick={() => {
-                        if (isMobile) {
-                          setHoveredCard((prev) => (prev === idx ? null : idx));
-                          // scroll selected card into view
-                          setTimeout(() => {
-                            cardRefs.current[idx]?.scrollIntoView({
-                              behavior: 'smooth',
-                              inline: 'center',
-                              block: 'nearest',
-                            });
-                          }, 80);
-                        }
-                      }}
-                      onPointerDown={(e: any) => {
-                        if (!isTop) return;
-                        dragState.current.active = true;
-                        dragState.current.startX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-                        dragState.current.dx = 0;
-                        try {
-                          e.currentTarget.setPointerCapture?.(e.pointerId);
-                        } catch {}
-                      }}
-                      onPointerMove={(e: any) => {
-                        if (!dragState.current.active || !isTop) return;
-                        const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
-                        dragState.current.dx = clientX - dragState.current.startX;
-                        forceRerender((n) => n + 1);
-                      }}
-                      onPointerUp={(e: any) => {
-                        if (!dragState.current.active || !isTop) return;
-                        dragState.current.active = false;
-                        const dx = dragState.current.dx;
-                        const threshold = 120;
-                        if (Math.abs(dx) > threshold) {
-                          const direction = dx > 0 ? 1 : -1;
-                          dragState.current.dx = direction * (window.innerWidth + 200);
-                          forceRerender((n) => n + 1);
-                          setTimeout(() => {
-                            setCards((prev) => {
-                              const copy = [...prev];
-                              const swiped = copy.pop();
-                              if (swiped) copy.unshift(swiped);
-                              return copy;
-                            });
-                            dragState.current.dx = 0;
-                            forceRerender((n) => n + 1);
-                          }, 300);
-                        } else {
-                          dragState.current.dx = 0;
-                          forceRerender((n) => n + 1);
-                        }
-                      }}
+                      whileDrag={isTop ? { scale: 1.02 } : undefined}
+                      animate={
+                        isTop
+                          ? topControls
+                          : { x: animX, y: baseY + animY, rotateY: animRotate + baseRotate, scale: animScale }
+                      }
+                      transition={isTop ? undefined : { type: 'spring', stiffness: 300, damping: 30 }}
                     >
                       <div
-                        className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-gray-800/50 shadow-2xl
-                                    transition-all duration-500 hover:border-emerald-500/50 hover:shadow-emerald-500/30"
+                        className={`relative w-full h-full rounded-2xl overflow-hidden border-2 border-gray-800/50 shadow-2xl transition-all duration-500 hover:border-emerald-500/50 hover:shadow-emerald-500/30`}
                       >
                         <Image
                           src={src}
                           alt={`About image ${idx + 1}`}
                           fill
-                          className={`object-cover transition-all duration-700 ${
-                            isHovered ? 'scale-110 brightness-110' : 'scale-100 brightness-75'
-                          }`}
+                          className={`object-cover transition-all duration-700 ${applyHover ? 'scale-110 brightness-110' : 'scale-100 brightness-75'}`}
                         />
                         {/* Gradient overlay */}
                         <div
-                          className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent
-                                    transition-opacity duration-500 ${isHovered ? 'opacity-90' : 'opacity-50'}`}
+                          className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 ${applyHover ? 'opacity-90' : 'opacity-50'}`}
                         />
                         {/* Shine effect */}
                         <div
                           className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/30 to-white/0 transition-transform duration-700"
                           style={{
-                            transform: isHovered ? 'translateX(100%)' : 'translateX(-100%)',
+                            transform: applyHover ? 'translateX(100%)' : 'translateX(-100%)',
                           }}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
