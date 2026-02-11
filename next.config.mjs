@@ -11,6 +11,10 @@ const nextConfig = {
         hostname: 'qrccvrhxwmsgzauwnfqb.supabase.co',
         pathname: '/storage/v1/object/sign/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'media.licdn.com',
+      },
     ],
   },
   webpack(config) {
