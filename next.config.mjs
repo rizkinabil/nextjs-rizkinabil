@@ -8,15 +8,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'raw.githubusercontent.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.jsdelivr.net',
-      },
-      {
-        protocol: 'https',
-        hostname: 'media.licdn.com',
+        hostname: 'qrccvrhxwmsgzauwnfqb.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
   },
@@ -53,7 +46,7 @@ const nextConfig = {
             },
           },
         },
-      }
+      },
     );
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
