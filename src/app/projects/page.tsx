@@ -4,6 +4,7 @@ import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
 import { SectionHeader } from '@/components/SectionHeader';
 import { ProjectCard } from '@/components/ProjectCard';
+import { LoadingState } from '@/components/LoadingState';
 import { useAllProjects } from '@/hooks/usePortfolio';
 
 export default function ProjectsPage() {
@@ -27,7 +28,7 @@ export default function ProjectsPage() {
       {/* Projects Grid */}
       <section className="pb-20 px-4">
         <div className="container max-w-6xl mx-auto">
-          {loading && <p className="text-center text-white/70">Loading projects...</p>}
+          {loading && <LoadingState message="Loading projects..." size="lg" variant="orbit" />}
           {error && <p className="text-center text-red-400">Error: {error}</p>}
           {allProjects && allProjects.length === 0 && !loading && (
             <p className="text-center text-white/70">No projects found.</p>

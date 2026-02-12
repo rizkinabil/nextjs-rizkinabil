@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
+import { Spinner } from '@/components/Spinner';
 import { useTestimonials } from '@/hooks/usePortfolio';
 import { cn } from '@/utils/cn';
 
@@ -103,7 +104,6 @@ export const TestimonialsSection = () => {
   }, [testimonials]);
 
   if (testimonialsLoading) {
-    console.log('loading here');
     return (
       <div className="py-16 lg:py-24">
         <div className="container">
@@ -113,7 +113,10 @@ export const TestimonialsSection = () => {
             description="Don't just take my word for it. See what peoples have to say about my work."
           />
           <div className="mt-16 lg:mt-24 flex justify-center">
-            <p>Loading...</p>
+            <div className="flex flex-col items-center gap-4">
+              <Spinner size="xl" variant="orbit" label="Loading testimonials..." />
+              <p className="text-white/60 text-sm font-medium animate-pulse">Loading testimonials...</p>
+            </div>
           </div>
         </div>
       </div>

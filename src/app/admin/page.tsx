@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/LoadingState';
 import { useAboutData, useFeaturedProjects, useTestimonials } from '@/hooks/usePortfolio';
 
 export default function AdminDashboard() {
@@ -11,8 +12,15 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white">Loading dashboard...</div>
+      <div className="min-h-screen bg-gray-900">
+        <nav className="bg-gray-800 border-b border-gray-700">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between h-16">
+              <h1 className="text-white font-bold text-xl">Portfolio Admin</h1>
+            </div>
+          </div>
+        </nav>
+        <LoadingState message="Loading dashboard data..." centered size="xl" variant="dots" />
       </div>
     );
   }

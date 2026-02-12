@@ -2,6 +2,7 @@
 
 import GlobeImage from '@/assets/images/journey.png';
 import { ABOUT_IMAGES } from '@/constants/aboutImages';
+import { LoadingState } from '@/components/LoadingState';
 import { useAboutData } from '@/hooks/usePortfolio';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
@@ -61,8 +62,8 @@ export const AboutSection = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="py-20 bg-gray-950 min-h-[80vh] flex items-center justify-center">
-        <div className="text-white">Loading profile...</div>
+      <div className="py-20 bg-gray-950 min-h-[80vh]">
+        <LoadingState message="Loading profile..." centered size="xl" variant="pulse" />
       </div>
     );
   }
