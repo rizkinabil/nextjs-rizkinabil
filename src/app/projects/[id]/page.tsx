@@ -1,9 +1,9 @@
 'use client';
 
+import { LoadingState } from '@/components/LoadingState';
 import { useProject } from '@/hooks/usePortfolio';
 import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
-import { LoadingState } from '@/components/LoadingState';
 import { ArrowLeft, CheckCircle2, ExternalLink, Github } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
     return (
       <div className="min-h-screen bg-gray-900">
         <Header />
-        <LoadingState message="Loading project details..." centered size="xl" variant="pulse" />
+        <LoadingState message="Loading project details..." centered size="xl" variant="orbit" />
       </div>
     );
   }
