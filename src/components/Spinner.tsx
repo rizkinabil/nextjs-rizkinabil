@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
+import { motion } from 'framer-motion';
 
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -31,7 +31,8 @@ export const Spinner = ({ size = 'md', variant = 'ring', className, label = 'Loa
         <motion.div
           className="absolute inset-0 rounded-full"
           style={{
-            background: 'conic-gradient(from 0deg, rgba(16, 185, 129, 0) 0%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0) 100%)',
+            background:
+              'conic-gradient(from 0deg, rgba(16, 185, 129, 0) 0%, rgba(16, 185, 129, 0.8) 50%, rgba(16, 185, 129, 0) 100%)',
             maskImage: 'radial-gradient(circle, transparent 35%, black 35%)',
             WebkitMaskImage: 'radial-gradient(circle, transparent 35%, black 35%)',
           }}
@@ -133,10 +134,9 @@ export const Spinner = ({ size = 'md', variant = 'ring', className, label = 'Loa
 
         {/* Orbiting element */}
         <motion.div
-          className="absolute top-0 left-1/2 -translate-x-1/2"
+          className="absolute inset-0"
           style={{
-            width: orbitSize / 5,
-            height: orbitSize / 5,
+            transformOrigin: 'center',
           }}
           animate={{
             rotate: 360,
@@ -168,6 +168,5 @@ export const Spinner = ({ size = 'md', variant = 'ring', className, label = 'Loa
       </div>
     );
   }
-
   return null;
 };
