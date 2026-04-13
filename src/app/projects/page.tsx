@@ -1,13 +1,14 @@
 'use client';
 
+import { LoadingState } from '@/components/LoadingState';
+import { ProjectCard } from '@/components/ProjectCard';
+import { SectionHeader } from '@/components/SectionHeader';
 import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
-import { SectionHeader } from '@/components/SectionHeader';
-import { ProjectCard } from '@/components/ProjectCard';
-import { useAllProjects } from '@/hooks/usePortfolio';
+import { useGetAllProjects } from '@/usecase/projects';
 
 export default function ProjectsPage() {
-  const { data: allProjects, loading, error } = useAllProjects();
+  const { data: allProjects, loading, error } = useGetAllProjects();
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -26,8 +27,8 @@ export default function ProjectsPage() {
 
       {/* Projects Grid */}
       <section className="pb-20 px-4">
-        <div className="container max-w-6xl mx-auto">
-          {loading && <p className="text-center text-white/70">Loading projects...</p>}
+        <div className="container max-w-6xl min-h-screen 2xl mx-auto">
+          {loading && <LoadingState message="Loading projects..." size="lg" variant="orbit" />}
           {error && <p className="text-center text-red-400">Error: {error}</p>}
           {allProjects && allProjects.length === 0 && !loading && (
             <p className="text-center text-white/70">No projects found.</p>

@@ -9,7 +9,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'qrccvrhxwmsgzauwnfqb.supabase.co',
-        pathname: '/storage/v1/object/sign/**',
+        pathname: '/storage/v1/object/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.jsdelivr.net',
       },
       {
         protocol: 'https',

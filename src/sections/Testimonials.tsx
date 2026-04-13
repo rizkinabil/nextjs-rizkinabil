@@ -7,7 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
-import { useTestimonials } from '@/hooks/usePortfolio';
+import { Spinner } from '@/components/Spinner';
+import { useGetTestimonials } from '@/usecase/testimonials';
 import { cn } from '@/utils/cn';
 
 export const TestimonialsSection = () => {
@@ -15,7 +16,7 @@ export const TestimonialsSection = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Toggle automatic sliding (set to false to disable auto-slide)
   const AUTO_SLIDE = false;
-  const { data: testimonials, loading: testimonialsLoading, error: testimonialFailed } = useTestimonials();
+  const { data: testimonials, loading: testimonialsLoading, error: testimonialFailed } = useGetTestimonials();
 
   const [isHovered, setIsHovered] = useState(false);
   // per-card expand state handled via expandedIndex
@@ -103,7 +104,6 @@ export const TestimonialsSection = () => {
   }, [testimonials]);
 
   if (testimonialsLoading) {
-    console.log('loading here');
     return (
       <div className="py-16 lg:py-24">
         <div className="container">
@@ -113,7 +113,10 @@ export const TestimonialsSection = () => {
             description="Don't just take my word for it. See what peoples have to say about my work."
           />
           <div className="mt-16 lg:mt-24 flex justify-center">
-            <p>Loading...</p>
+            <div className="flex flex-col items-center gap-4">
+              <Spinner size="xl" variant="orbit" label="Loading testimonials..." />
+              <p className="text-white/60 text-sm font-medium animate-pulse">Loading testimonials...</p>
+            </div>
           </div>
         </div>
       </div>
