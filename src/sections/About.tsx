@@ -1,15 +1,15 @@
 'use client';
 
 import GlobeImage from '@/assets/images/journey.png';
-import { ABOUT_IMAGES } from '@/constants/aboutImages';
 import { LoadingState } from '@/components/LoadingState';
-import { useAboutData } from '@/hooks/usePortfolio';
+import { ABOUT_IMAGES } from '@/constants/aboutImages';
+import { useGetAbout } from '@/usecase/profile';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 export const AboutSection = () => {
-  const { profile, experiences, loading, error } = useAboutData();
+  const { profile, experiences, loading, error } = useGetAbout();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [groupHovered, setGroupHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -288,7 +288,7 @@ export const AboutSection = () => {
 
             {/* New Experience Layout - Horizontal */}
             <div className="mb-20 space-y-12">
-              {experiences.map((exp, idx) => (
+              {experiences.map((exp: any, idx: any) => (
                 <div
                   key={idx}
                   className="group border-b border-gray-800/30 pb-12 last:border-b-0 transition-all duration-300 hover:border-emerald-500/20"

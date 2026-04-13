@@ -1,9 +1,9 @@
 'use client';
 
 import { LoadingState } from '@/components/LoadingState';
-import { useProject } from '@/hooks/usePortfolio';
 import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
+import { useGetProjectById } from '@/usecase/projects';
 import { ArrowLeft, CheckCircle2, ExternalLink, Github } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ interface ProjectDetailPageProps {
 }
 
 export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
-  const { data: project, loading, error } = useProject(params.id);
+  const { data: project, loading, error } = useGetProjectById(params.id);
 
   if (loading) {
     return (

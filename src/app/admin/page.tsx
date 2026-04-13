@@ -1,12 +1,14 @@
 'use client';
 
 import { LoadingState } from '@/components/LoadingState';
-import { useAboutData, useFeaturedProjects, useTestimonials } from '@/hooks/usePortfolio';
+import { useGetAbout } from '@/usecase/profile';
+import { useGetFeaturedProjects } from '@/usecase/projects';
+import { useGetTestimonials } from '@/usecase/testimonials';
 
 export default function AdminDashboard() {
-  const { profile, experiences, highlights, toolboxItems, loading: aboutLoading } = useAboutData();
-  const { data: testimonials, loading: testimonialsLoading } = useTestimonials();
-  const { data: projects, loading: projectsLoading } = useFeaturedProjects();
+  const { profile, experiences, loading: aboutLoading } = useGetAbout();
+  const { data: testimonials, loading: testimonialsLoading } = useGetTestimonials();
+  const { data: projects, loading: projectsLoading } = useGetFeaturedProjects();
 
   const loading = aboutLoading || testimonialsLoading || projectsLoading;
 

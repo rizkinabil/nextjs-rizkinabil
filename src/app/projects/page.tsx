@@ -3,12 +3,12 @@
 import { LoadingState } from '@/components/LoadingState';
 import { ProjectCard } from '@/components/ProjectCard';
 import { SectionHeader } from '@/components/SectionHeader';
-import { useAllProjects } from '@/hooks/usePortfolio';
 import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
+import { useGetAllProjects } from '@/usecase/projects';
 
 export default function ProjectsPage() {
-  const { data: allProjects, loading, error } = useAllProjects();
+  const { data: allProjects, loading, error } = useGetAllProjects();
 
   return (
     <div className="min-h-screen bg-gray-900">

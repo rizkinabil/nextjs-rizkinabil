@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/Card';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Spinner } from '@/components/Spinner';
-import { useTestimonials } from '@/hooks/usePortfolio';
+import { useGetTestimonials } from '@/usecase/testimonials';
 import { cn } from '@/utils/cn';
 
 export const TestimonialsSection = () => {
@@ -16,7 +16,7 @@ export const TestimonialsSection = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Toggle automatic sliding (set to false to disable auto-slide)
   const AUTO_SLIDE = false;
-  const { data: testimonials, loading: testimonialsLoading, error: testimonialFailed } = useTestimonials();
+  const { data: testimonials, loading: testimonialsLoading, error: testimonialFailed } = useGetTestimonials();
 
   const [isHovered, setIsHovered] = useState(false);
   // per-card expand state handled via expandedIndex

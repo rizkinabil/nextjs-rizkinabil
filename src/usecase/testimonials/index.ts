@@ -1,0 +1,1 @@
+export { useGetTestimonials } from './useGetTestimonials';

@@ -4,7 +4,7 @@ import projectsHero from '@/assets/images/projects-hero.png';
 import { ProjectBanner } from '@/components/ProjectBanner';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Spinner } from '@/components/Spinner';
-import { useFeaturedProjects } from '@/hooks/usePortfolio';
+import { useGetFeaturedProjects } from '@/usecase/projects';
 import { useScroll } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useRef } from 'react';
 
 export const ProjectsSection = () => {
-  const { data: featuredProjects, loading, error } = useFeaturedProjects();
+  const { data: featuredProjects, loading, error } = useGetFeaturedProjects();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -28,7 +28,11 @@ export const ProjectsSection = () => {
           <Image src={projectsHero} alt="" fill className="object-cover" priority />
         </div>
         <div className="container">
-          <SectionHeader eyeBrow="Featured Projects" title="Real-world Results" description="See how I transformed concepts into engaging digital experiences." />
+          <SectionHeader
+            eyeBrow="Featured Projects"
+            title="Real-world Results"
+            description="See how I transformed concepts into engaging digital experiences."
+          />
           <div className="flex justify-center items-center mt-16">
             <div className="flex flex-col items-center gap-4">
               <Spinner size="xl" variant="ring" label="Loading featured projects..." />
