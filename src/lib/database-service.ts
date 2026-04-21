@@ -228,6 +228,34 @@ export async function getToolboxItems(): Promise<ToolboxData[]> {
   return data || [];
 }
 
+// Newsletter
+export type NewsletterSubscriberData = Tables['newsletter_subscribers']['Row'];
+
+export async function createNewsletterSubscriber(email: string): Promise<{ alreadySubscribed: boolean; data: NewsletterSubscriberData }> {
+  const { data: existing } = await supabase
+    .from('newsletter_subscribers')
+    .select('id')
+    .eq('email', email)
+    .eq('is_active', true)
+    .single();
+
+  if (existing) {
+    return { alreadySubscribed: true, data: existing as unknown as NewsletterSubscriberData };
+  }
+
+  const { data, error } = await supabase
+    .from('newsletter_subscribers')
+    .insert({ email })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating newsletter subscriber:', error);
+    throw error;
+  }
+  return { alreadySubscribed: false, data };
+}
+
 // Highlights
 export async function getHighlights(): Promise<HighlightData[]> {
   const { data, error } = await supabase

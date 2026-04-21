@@ -133,10 +133,9 @@ export const TestimonialsSection = () => {
             description="Don't just take my word for it. See what people have to say about my work."
           />
           <div className="mt-16 lg:mt-24 flex justify-center">
-            {/* <ErrorMessage
-               message="Failed to load testimonials. Please try again later."
-               onRetry={() => window.location.reload()}
-             /> */}
+            <p className="text-white/50 text-sm" role="alert">
+              Could not load testimonials. Please try again later.
+            </p>
           </div>
         </div>
       </div>
@@ -163,6 +162,7 @@ export const TestimonialsSection = () => {
             {isScrollable && (
               <button
                 type="button"
+                aria-label="Scroll testimonials left"
                 onClick={() => handleScroll('left')}
                 className="
                   hidden md:flex
@@ -173,13 +173,14 @@ export const TestimonialsSection = () => {
                   hover:bg-white/10 transition
                 "
               >
-                <ChevronLeft className="size-5 text-white" />
+                <ChevronLeft className="size-5 text-white" aria-hidden="true" />
               </button>
             )}
 
             {isScrollable && (
               <button
                 type="button"
+                aria-label="Scroll testimonials right"
                 onClick={() => handleScroll('right')}
                 className="
                   hidden md:flex
@@ -190,7 +191,7 @@ export const TestimonialsSection = () => {
                   hover:bg-white/10 transition
                 "
               >
-                <ChevronRight className="size-5 text-white" />
+                <ChevronRight className="size-5 text-white" aria-hidden="true" />
               </button>
             )}
 
