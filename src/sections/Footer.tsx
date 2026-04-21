@@ -102,7 +102,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-white font-semibold text-sm uppercase tracking-wider">Quick Links</h4>
             <nav className="flex flex-col gap-2">
-              <a href="#" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
+              <a href="/" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">
                 Home
               </a>
               <a href="#projects" className="text-white/70 hover:text-emerald-400 text-sm transition-colors">

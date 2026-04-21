@@ -109,8 +109,8 @@ export const TestimonialsSection = () => {
         <div className="container">
           <SectionHeader
             eyeBrow="Recommendations"
-            title="What Peoples Say About Me"
-            description="Don't just take my word for it. See what peoples have to say about my work."
+            title="What People Say About Me"
+            description="Don't just take my word for it. See what people have to say about my work."
           />
           <div className="mt-16 lg:mt-24 flex justify-center">
             <div className="flex flex-col items-center gap-4">
@@ -129,8 +129,8 @@ export const TestimonialsSection = () => {
         <div className="container">
           <SectionHeader
             eyeBrow="Recommendations"
-            title="What Peoples Say About Me"
-            description="Don't just take my word for it. See what peoples have to say about my work."
+            title="What People Say About Me"
+            description="Don't just take my word for it. See what people have to say about my work."
           />
           <div className="mt-16 lg:mt-24 flex justify-center">
             {/* <ErrorMessage
@@ -145,11 +145,11 @@ export const TestimonialsSection = () => {
 
   return (
     <div className="py-16 lg:py-24">
-      <div className="container">
+      <div className="mx-5">
         <SectionHeader
           eyeBrow="Recommendations"
-          title="What Peoples Say About Me"
-          description="Don't just take my word for it. See what peoples have to say about my work."
+          title="What People Say About Me"
+          description="Don't just take my word for it. See what people have to say about my work."
         />
 
         <motion.div

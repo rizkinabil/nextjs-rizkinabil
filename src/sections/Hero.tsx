@@ -54,7 +54,7 @@ export const HeroSection = () => {
       </motion.div>
 
       {/* Content */}
-      <motion.div className="container relative flex flex-col items-center text-center mt-20" style={{ y: contentY }}>
+      <motion.div className="container relative flex flex-col items-center text-center" style={{ y: contentY }}>
         <Image src={memojiImage} className="size-[100px]" alt="memoji a person working behind a laptop" />
         <div className="bg-gray-950/70 border border-gray-800/70 px-4 py-1.5 inline-flex items-center gap-3 rounded-full backdrop-blur">
           <span className="animate-pulse bg-emerald-400 size-2.5 rounded-full" />
@@ -62,9 +62,10 @@ export const HeroSection = () => {
         </div>
 
         <div className="max-w-xl mt-6">
-          <h1 className="font-serif text-6xl md:text-5xl">Hello, I&apos;m Nabil!</h1>
+          <h1 className="font-serif text-4xl md:text-5xl">Hello, I&apos;m Nabil!</h1>
           <p className="mt-4 text-white/70 md:text-lg">
-            Helping you turn great ideas into scalable software and seamless user experiences. Combining mental models and solid architecture to build high-performance, high-impact products.
+            Helping you turn great ideas into scalable software and seamless user experiences. Combining mental models
+            and solid architecture to build high-performance, high-impact products.
           </p>
         </div>
 
