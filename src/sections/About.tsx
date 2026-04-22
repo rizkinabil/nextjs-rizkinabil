@@ -63,7 +63,7 @@ export const AboutSection = () => {
   if (loading) {
     return (
       <div className="py-20 bg-gray-950 min-h-[80vh]">
-        <LoadingState message="Loading profile..." centered size="xl" variant="pulse" />
+        <LoadingState message="Loading profile..." centered size="xl" variant="orbit" />
       </div>
     );
   }
@@ -288,7 +288,7 @@ export const AboutSection = () => {
 
             {/* New Experience Layout - Horizontal */}
             <div className="mb-20 space-y-12">
-              {experiences.map((exp: any, idx: any) => (
+              {experiences.map((exp, idx) => (
                 <div
                   key={idx}
                   className="group border-b border-gray-800/30 pb-12 last:border-b-0 transition-all duration-300 hover:border-emerald-500/20"

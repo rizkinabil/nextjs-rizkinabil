@@ -228,6 +228,109 @@ export async function getToolboxItems(): Promise<ToolboxData[]> {
   return data || [];
 }
 
+// Newsletter
+export type NewsletterSubscriberData = Tables['newsletter_subscribers']['Row'];
+
+export async function createNewsletterSubscriber(email: string): Promise<{ alreadySubscribed: boolean; data: NewsletterSubscriberData }> {
+  const { data: existing } = await supabase
+    .from('newsletter_subscribers')
+    .select('id')
+    .eq('email', email)
+    .eq('is_active', true)
+    .single();
+
+  if (existing) {
+    return { alreadySubscribed: true, data: existing as unknown as NewsletterSubscriberData };
+  }
+
+  const { data, error } = await supabase
+    .from('newsletter_subscribers')
+    .insert({ email })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating newsletter subscriber:', error);
+    throw error;
+  }
+  return { alreadySubscribed: false, data };
+}
+
+// Blog Posts
+export type BlogPostData = Tables['blog_posts']['Row'];
+export type BlogPostInput = Tables['blog_posts']['Insert'];
+
+export async function getBlogPosts(): Promise<BlogPostData[]> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching blog posts:', error);
+    throw error;
+  }
+  return data || [];
+}
+
+export async function getPublishedBlogPosts(): Promise<BlogPostData[]> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('published', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching published blog posts:', error);
+    throw error;
+  }
+  return data || [];
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPostData | null> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null;
+    console.error('Error fetching blog post:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function createBlogPost(post: BlogPostInput): Promise<BlogPostData> {
+  const { data, error } = await supabase.from('blog_posts').insert(post).select().single();
+
+  if (error) {
+    console.error('Error creating blog post:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function updateBlogPost(id: string, updates: Tables['blog_posts']['Update']): Promise<BlogPostData> {
+  const { data, error } = await supabase.from('blog_posts').update(updates).eq('id', id).select().single();
+
+  if (error) {
+    console.error('Error updating blog post:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function deleteBlogPost(id: string): Promise<void> {
+  const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+
+  if (error) {
+    console.error('Error deleting blog post:', error);
+    throw error;
+  }
+}
+
 // Highlights
 export async function getHighlights(): Promise<HighlightData[]> {
   const { data, error } = await supabase

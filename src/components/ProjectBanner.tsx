@@ -1,3 +1,5 @@
+'use client';
+
 import { Card } from '@/components/Card';
 import { Project } from '@/types/frontend.types';
 import { motion, useScroll, useTransform } from 'framer-motion';

@@ -4,20 +4,21 @@ import ArrowDown from '@/assets/icons/arrow-down.svg';
 import auroraHero from '@/assets/images/hero-section.png';
 import memojiImage from '@/assets/images/memoji-nabil.png';
 import { FirefliesLayer } from '@/components/FirefliesLayer';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
 export const HeroSection = () => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
   });
 
-  const skyY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-  const orbitY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 20]);
+  const skyY = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [0, 80]);
+  const orbitY = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [0, -40]);
+  const contentY = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [0, 20]);
 
   const handleScrollToProjects = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ export const HeroSection = () => {
     if (projectsSection) {
       const headerOffset = 80;
       const elementPosition = projectsSection.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
 
       window.scrollTo({
         top: offsetPosition,
