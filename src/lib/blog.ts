@@ -1,64 +1,51 @@
-import fs from 'fs';
-import matter from 'gray-matter';
-import path from 'path';
-
-const BLOG_DIR = path.join(process.cwd(), 'content', 'blog');
+import { getBlogPostBySlug, getPublishedBlogPosts } from './database-service';
 
 export interface BlogPost {
+  id: string;
   slug: string;
   title: string;
-  date: string;
-  excerpt: string;
+  excerpt: string | null;
   tags: string[];
   published: boolean;
+  created_at: string;
 }
 
 export interface BlogPostWithContent extends BlogPost {
-  content: string;
+  content: object | null;
 }
 
-export function getAllPosts(): BlogPost[] {
-  if (!fs.existsSync(BLOG_DIR)) return [];
-
-  const files = fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith('.mdx'));
-
-  const posts = files
-    .map((filename) => {
-      const slug = filename.replace(/\.mdx$/, '');
-      const raw = fs.readFileSync(path.join(BLOG_DIR, filename), 'utf-8');
-      const { data } = matter(raw);
-
-      return {
-        slug,
-        title: data.title ?? slug,
-        date: data.date ?? '',
-        excerpt: data.excerpt ?? '',
-        tags: Array.isArray(data.tags) ? data.tags : [],
-        published: data.published !== false,
-      } satisfies BlogPost;
-    })
-    .filter((p) => p.published)
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
-
-  return posts;
+export async function getAllPosts(): Promise<BlogPost[]> {
+  try {
+    const posts = await getPublishedBlogPosts();
+    return posts.map((p) => ({
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      excerpt: p.excerpt,
+      tags: p.tags ?? [],
+      published: p.published,
+      created_at: p.created_at,
+    }));
+  } catch {
+    return [];
+  }
 }
 
-export function getPostBySlug(slug: string): BlogPostWithContent | null {
-  const filePath = path.join(BLOG_DIR, `${slug}.mdx`);
-  if (!fs.existsSync(filePath)) return null;
-
-  const raw = fs.readFileSync(filePath, 'utf-8');
-  const { data, content } = matter(raw);
-
-  if (data.published === false) return null;
-
-  return {
-    slug,
-    title: data.title ?? slug,
-    date: data.date ?? '',
-    excerpt: data.excerpt ?? '',
-    tags: Array.isArray(data.tags) ? data.tags : [],
-    published: true,
-    content,
-  };
+export async function getPostBySlug(slug: string): Promise<BlogPostWithContent | null> {
+  try {
+    const post = await getBlogPostBySlug(slug);
+    if (!post || !post.published) return null;
+    return {
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      tags: post.tags ?? [],
+      published: post.published,
+      created_at: post.created_at,
+      content: post.content as object | null,
+    };
+  } catch {
+    return null;
+  }
 }

@@ -1,18 +1,20 @@
 import { SectionHeader } from '@/components/SectionHeader';
+import { getAllPosts } from '@/lib/blog';
 import { Footer } from '@/sections/Footer';
 import { Header } from '@/sections/Header';
-import { getAllPosts } from '@/lib/blog';
+import { ArrowUpRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Blog | Rizki Nabil Aufa',
   description: 'Articles on software engineering, TypeScript, React, and frontend architecture.',
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export const revalidate = 60;
+
+export default async function BlogPage() {
+  const posts = await getAllPosts();
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -36,7 +38,10 @@ export default function BlogPage() {
             <ul className="divide-y divide-gray-800" role="list">
               {posts.map((post) => (
                 <li key={post.slug} className="group py-8 first:pt-0">
-                  <Link href={`/blog/${post.slug}`} className="block space-y-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-lg">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="block space-y-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-lg"
+                  >
                     <div className="flex items-start justify-between gap-4">
                       <h2 className="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors leading-snug">
                         {post.title}
@@ -48,19 +53,14 @@ export default function BlogPage() {
                       <p className="text-white/60 text-sm leading-relaxed">{post.excerpt}</p>
                     )}
 
-                    <div className="flex items-center gap-4">
-                      {post.date && (
-                        <time
-                          dateTime={post.date}
-                          className="text-xs text-white/40"
-                        >
-                          {new Date(post.date).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
-                        </time>
-                      )}
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <time dateTime={post.created_at} className="text-xs text-white/40">
+                        {new Date(post.created_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </time>
                       {post.tags.length > 0 && (
                         <div className="flex gap-2 flex-wrap" aria-label="Tags">
                           {post.tags.map((tag) => (

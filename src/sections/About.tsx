@@ -63,7 +63,7 @@ export const AboutSection = () => {
   if (loading) {
     return (
       <div className="py-20 bg-gray-950 min-h-[80vh]">
-        <LoadingState message="Loading profile..." centered size="xl" variant="pulse" />
+        <LoadingState message="Loading profile..." centered size="xl" variant="orbit" />
       </div>
     );
   }
