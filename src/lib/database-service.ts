@@ -1,4 +1,4 @@
-import { supabase } from '@/config/supabase';
+import { supabase, supabaseAdmin } from '@/config/supabase';
 import { Database } from '@/types/database.type';
 
 type Tables = Database['public']['Tables'];
@@ -39,7 +39,7 @@ export async function getTestimonials(): Promise<TestimonialData[]> {
 }
 
 export async function createTestimonial(testimonial: TestimonialInput): Promise<TestimonialData> {
-  const { data, error } = await supabase.from('testimonials').insert(testimonial).select().single();
+  const { data, error } = await supabaseAdmin.from('testimonials').insert(testimonial).select().single();
 
   if (error) {
     console.error('Error creating testimonial:', error);
@@ -52,7 +52,7 @@ export async function updateTestimonial(
   id: string,
   updates: Tables['testimonials']['Update']
 ): Promise<TestimonialData> {
-  const { data, error } = await supabase.from('testimonials').update(updates).eq('id', id).select().single();
+  const { data, error } = await supabaseAdmin.from('testimonials').update(updates).eq('id', id).select().single();
 
   if (error) {
     console.error('Error updating testimonial:', error);
@@ -62,7 +62,7 @@ export async function updateTestimonial(
 }
 
 export async function deleteTestimonial(id: string): Promise<void> {
-  const { error } = await supabase.from('testimonials').update({ is_active: false }).eq('id', id);
+  const { error } = await supabaseAdmin.from('testimonials').update({ is_active: false }).eq('id', id);
 
   if (error) {
     console.error('Error deleting testimonial:', error);
@@ -131,7 +131,7 @@ export async function getProjectById(id: string): Promise<ProjectData | null> {
 }
 
 export async function createProject(project: ProjectInput): Promise<ProjectData> {
-  const { data, error } = await supabase.from('projects').insert(project).select().single();
+  const { data, error } = await supabaseAdmin.from('projects').insert(project).select().single();
 
   if (error) {
     console.error('Error creating project:', error);
@@ -162,10 +162,10 @@ export async function getProfile(): Promise<ProfileData | null> {
 
 export async function updateProfile(updates: Tables['profile']['Update']): Promise<ProfileData> {
   // Get first profile record and update it
-  const { data: existing } = await supabase.from('profile').select('id').single();
+  const { data: existing } = await supabaseAdmin.from('profile').select('id').single();
 
   if (existing) {
-    const { data, error } = await supabase.from('profile').update(updates).eq('id', existing.id).select().single();
+    const { data, error } = await supabaseAdmin.from('profile').update(updates).eq('id', existing.id).select().single();
 
     if (error) {
       console.error('Error updating profile:', error);
@@ -174,7 +174,7 @@ export async function updateProfile(updates: Tables['profile']['Update']): Promi
     return data;
   } else {
     // Create new profile if none exists
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('profile')
       .insert(updates as ProfileInput)
       .select()
@@ -204,7 +204,7 @@ export async function getExperiences(): Promise<ExperienceData[]> {
 }
 
 export async function createExperience(experience: ExperienceInput): Promise<ExperienceData> {
-  const { data, error } = await supabase.from('experiences').insert(experience).select().single();
+  const { data, error } = await supabaseAdmin.from('experiences').insert(experience).select().single();
 
   if (error) {
     console.error('Error creating experience:', error);
@@ -232,7 +232,7 @@ export async function getToolboxItems(): Promise<ToolboxData[]> {
 export type NewsletterSubscriberData = Tables['newsletter_subscribers']['Row'];
 
 export async function createNewsletterSubscriber(email: string): Promise<{ alreadySubscribed: boolean; data: NewsletterSubscriberData }> {
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseAdmin
     .from('newsletter_subscribers')
     .select('id')
     .eq('email', email)
@@ -243,7 +243,7 @@ export async function createNewsletterSubscriber(email: string): Promise<{ alrea
     return { alreadySubscribed: true, data: existing as unknown as NewsletterSubscriberData };
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('newsletter_subscribers')
     .insert({ email })
     .select()
@@ -303,7 +303,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostData | nu
 }
 
 export async function createBlogPost(post: BlogPostInput): Promise<BlogPostData> {
-  const { data, error } = await supabase.from('blog_posts').insert(post).select().single();
+  const { data, error } = await supabaseAdmin.from('blog_posts').insert(post).select().single();
 
   if (error) {
     console.error('Error creating blog post:', error);
@@ -313,7 +313,7 @@ export async function createBlogPost(post: BlogPostInput): Promise<BlogPostData>
 }
 
 export async function updateBlogPost(id: string, updates: Tables['blog_posts']['Update']): Promise<BlogPostData> {
-  const { data, error } = await supabase.from('blog_posts').update(updates).eq('id', id).select().single();
+  const { data, error } = await supabaseAdmin.from('blog_posts').update(updates).eq('id', id).select().single();
 
   if (error) {
     console.error('Error updating blog post:', error);
@@ -323,7 +323,7 @@ export async function updateBlogPost(id: string, updates: Tables['blog_posts']['
 }
 
 export async function deleteBlogPost(id: string): Promise<void> {
-  const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+  const { error } = await supabaseAdmin.from('blog_posts').delete().eq('id', id);
 
   if (error) {
     console.error('Error deleting blog post:', error);
