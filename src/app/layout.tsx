@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   keywords: ['React', 'Next.js', 'TypeScript', 'Java Springboot', 'Software Engineer', 'Web Developer'],
   authors: [{ name: 'Rizki Nabil Aufa' }],
   creator: 'Rizki Nabil Aufa',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
   openGraph: {
     title: 'Rizki Nabil Aufa | Software Engineer',
     description:
