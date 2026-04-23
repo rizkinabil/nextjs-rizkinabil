@@ -93,7 +93,7 @@ export default function RootLayout({
                 '@type': 'SearchAction',
                 target: {
                   '@type': 'EntryPoint',
-                  urlTemplate: 'https://yourwebsite.com/search?q={search_term_string}',
+                  urlTemplate: 'https://rizkinabil.vercel.app.com/search?q={search_term_string}',
                 },
                 query_input: 'required name=search_term_string',
               },

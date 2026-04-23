@@ -18,16 +18,15 @@ export default function AdminLoginPage() {
     setStatus('loading');
     setErrorMsg('');
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false, // only existing users can log in
-      },
+    const res = await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
     });
 
-    if (error) {
-      setErrorMsg(error.message);
+    if (!res.ok) {
+      const data = await res.json();
+      setErrorMsg(data.error || 'Failed to send code. Try again.');
       setStatus('error');
     } else {
       setStep('otp');
