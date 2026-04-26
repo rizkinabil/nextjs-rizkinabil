@@ -1,10 +1,10 @@
 'use client';
 
+import { Project } from '@/types/frontend.types';
 import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import { Project } from '@/types/frontend.types';
 
 interface ProjectCardProps {
   project: Project;
@@ -21,7 +21,7 @@ export const ProjectCard = ({ project, index }: ProjectCardProps) => {
       className="group"
     >
       <Link href={`/projects/${project.id}`}>
-        <div className="relative overflow-hidden rounded-2xl bg-gray-900/50 border border-white/10 hover:border-emerald-400/50 transition-all duration-300 cursor-pointer">
+        <div className="relative overflow-hidden rounded-2xl bg-gray-900/50 border border-white/10 hover:border-emerald-400/50 transition-all duration-300 cursor-pointer min-h-[480px]">
           {/* Image */}
           <div className="relative aspect-video overflow-hidden">
             <Image
@@ -38,21 +38,21 @@ export const ProjectCard = ({ project, index }: ProjectCardProps) => {
             <div className="flex items-start justify-between gap-4 mb-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">
-                  <span>{project.company}</span>
+                  <span className="truncate min-h-5">{project.company}</span>
                   <span>&bull;</span>
                   <span>{project.year}</span>
                 </div>
-                <h3 className="font-serif text-xl md:text-2xl text-white group-hover:text-emerald-400 transition-colors">
+                <h3 className="font-serif text-xl md:text-2xl text-white group-hover:text-emerald-400 transition-colors min-h-[60px]">
                   {project.title}
                 </h3>
               </div>
               <ArrowUpRight className="size-5 text-white/40 group-hover:text-emerald-400 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300 flex-shrink-0" />
             </div>
 
-            <p className="text-sm text-white/70 line-clamp-2 mb-4">{project.description}</p>
+            <p className="text-sm text-white/70 line-clamp-4 mb-7">{project.description}</p>
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 max-h-10">
               {project.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}

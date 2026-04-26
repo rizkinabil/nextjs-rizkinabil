@@ -86,9 +86,7 @@ export const ProjectBanner = ({
             </div>
           </motion.div>
 
-          <motion.div
-            className="relative overflow-hidden rounded-2xl rounded-b-none lg:rounded-r-none h-full w-full mt-8 md:mt-12 lg:mt-0"
-          >
+          <motion.div className="relative overflow-hidden rounded-2xl rounded-b-none lg:rounded-r-none h-full w-full mt-8 md:mt-12 lg:mt-0">
             <div className="absolute -inset-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-emerald-400/10 blur-2xl" />
             <div className="ring-1 ring-white/10 overflow-hidden h-[300px] md:h-[400px] lg:h-[500px]">
               <motion.div style={{ scale: imageScale }} className="h-full">
