@@ -24,7 +24,7 @@ export function generateSEO(props: SEOProps): Metadata {
       type: 'website',
     },
     alternates: {
-      canonical: props.canonical || 'https://rizkinabil.vercel.app.com',
+      canonical: props.canonical || 'https://yourwebsite.com',
     },
   };
 }

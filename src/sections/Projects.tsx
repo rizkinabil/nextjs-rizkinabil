@@ -15,7 +15,7 @@ export async function ProjectsSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#020817]/90 via-[#020817]/70 to-transparent" />
         <Image src={projectsHero} alt="" fill className="object-cover" priority />
       </div>
-      <div className="container">
+      <div className="container pt-10">
         <SectionHeader
           eyeBrow="Featured Projects"
           title="Real-world Results"

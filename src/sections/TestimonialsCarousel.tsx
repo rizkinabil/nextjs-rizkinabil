@@ -122,12 +122,14 @@ export function TestimonialsCarousel({ testimonials }: { testimonials: Testimoni
                     </div>
                     <div>
                       <div className="font-semibold">{testimonial.name}</div>
-                      <div className="text-sm text-muted-foreground">{testimonial.position}</div>
+                      <div className="text-sm text-muted-foreground line-clamp-3 min-h-16">{testimonial.position}</div>
                     </div>
                   </div>
                   <p
-                    ref={(el) => { contentRefs.current[index] = el; }}
-                    className="mt-4 md:mt-6 text-sm md:text-base text-muted-foreground"
+                    ref={(el) => {
+                      contentRefs.current[index] = el;
+                    }}
+                    className="mt-4 md:mt-6 text-sm md:text-base text-muted-foreground min-h-16"
                     style={{
                       maxHeight: expandedIndex === index ? undefined : `${COLLAPSED_PX}px`,
                       overflow: 'hidden',
