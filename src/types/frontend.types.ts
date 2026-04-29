@@ -41,6 +41,7 @@ export interface Experience {
   period: string;
   location: string;
   description: string;
+  logo?: string;
 }
 
 export interface ToolboxItem {
