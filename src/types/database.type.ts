@@ -145,6 +145,7 @@ export interface Database {
           period: string;
           location: string | null;
           description: string | null;
+          logo: string | null;
           sort_order: number;
           is_active: boolean;
           created_at: string;
@@ -157,6 +158,7 @@ export interface Database {
           period: string;
           location?: string | null;
           description?: string | null;
+          logo?: string | null;
           sort_order?: number;
           is_active?: boolean;
           created_at?: string;
@@ -169,6 +171,7 @@ export interface Database {
           period?: string;
           location?: string | null;
           description?: string | null;
+          logo?: string | null;
           sort_order?: number;
           is_active?: boolean;
           created_at?: string;

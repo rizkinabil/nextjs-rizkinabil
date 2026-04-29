@@ -60,6 +60,7 @@ class PortfolioTransformer {
       period: data.period,
       location: data.location || '',
       description: data.description || '',
+      logo: data.logo || undefined,
     };
   }
 
