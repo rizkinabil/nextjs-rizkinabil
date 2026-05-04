@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Calistoga, Inter } from 'next/font/google';
+import Script from 'next/script';
 
 import { twMerge } from 'tailwind-merge';
 import './globals.css';
@@ -103,6 +104,14 @@ export default function RootLayout({
       </head>
       <body className={twMerge(inter.variable, calistoga.variable, 'bg-gray-900 text-white antialiased font-sans')}>
         {children}
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            async
+            src="https://analytics.umami.is/script.js"
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );

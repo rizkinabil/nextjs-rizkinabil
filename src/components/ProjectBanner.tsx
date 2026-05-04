@@ -1,6 +1,7 @@
 'use client';
 
 import { Card } from '@/components/Card';
+import { useUmami } from '@/hooks/useUmami';
 import { Project } from '@/types/frontend.types';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
@@ -22,6 +23,7 @@ export const ProjectBanner = ({
   progress: any;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { track } = useUmami();
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'start start'],
@@ -62,7 +64,12 @@ export const ProjectBanner = ({
             </ul>
             <div className="flex flex-col md:flex-row sm:w-auto gap-3 mt-8">
               {project.link && (
-                <a href={project.link} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => track('visit_live_site', { project: project.title })}
+                >
                   <motion.button
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
@@ -73,7 +80,10 @@ export const ProjectBanner = ({
                   </motion.button>
                 </a>
               )}
-              <Link href={`/projects/${project.id}`}>
+              <Link
+                href={`/projects/${project.id}`}
+                onClick={() => track('view_project_details', { project: project.title })}
+              >
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
