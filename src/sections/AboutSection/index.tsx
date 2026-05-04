@@ -1,6 +1,7 @@
 'use client';
 
 import { LoadingState } from '@/components/LoadingState';
+import { ContactBanner } from '@/sections/AboutSection/ContactBanner';
 import ExperienceTimeline from '@/sections/AboutSection/ExperienceTimeline';
 import PolaroidStack from '@/sections/AboutSection/PolaroidStack';
 import { useGetAbout } from '@/usecase/profile';
@@ -99,6 +100,9 @@ export const AboutSection = () => {
                 </div>
               </div>
             </div>
+
+            {/* Contact CTA */}
+            <ContactBanner profile={profile} />
           </div>
         </div>
       </div>
