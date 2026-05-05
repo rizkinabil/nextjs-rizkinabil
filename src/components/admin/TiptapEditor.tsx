@@ -18,12 +18,13 @@ import {
   Link as LinkIcon,
   List,
   ListOrdered,
+  Loader2,
   Minus,
   Quote,
   Undo,
   Redo,
 } from 'lucide-react';
-import { useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { cn } from '@/utils/cn';
 
 const lowlight = createLowlight(all);
@@ -62,6 +63,9 @@ const ToolbarButton = ({ onClick, active, disabled, title, children }: ToolbarBu
 );
 
 export const TiptapEditor = ({ content, onChange, placeholder }: TiptapEditorProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -81,7 +85,23 @@ export const TiptapEditor = ({ content, onChange, placeholder }: TiptapEditorPro
     },
   });
 
-  const addImage = useCallback(() => {
+  const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editor) return;
+    e.target.value = '';
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch('/api/blog/upload-image', { method: 'POST', body: formData });
+    if (res.ok) {
+      const { url } = await res.json();
+      editor.chain().focus().setImage({ src: url }).run();
+    }
+    setUploading(false);
+  }, [editor]);
+
+  const addImageByUrl = useCallback(() => {
     const url = window.prompt('Image URL');
     if (url && editor) editor.chain().focus().setImage({ src: url }).run();
   }, [editor]);
@@ -142,8 +162,12 @@ export const TiptapEditor = ({ content, onChange, placeholder }: TiptapEditorPro
         <ToolbarButton title="Add link" onClick={addLink} active={editor.isActive('link')}>
           <LinkIcon className="size-4" />
         </ToolbarButton>
-        <ToolbarButton title="Add image" onClick={addImage}>
-          <ImageIcon className="size-4" />
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+        <ToolbarButton title="Upload image" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+          {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImageIcon className="size-4" />}
+        </ToolbarButton>
+        <ToolbarButton title="Image from URL" onClick={addImageByUrl}>
+          <span className="text-[10px] font-mono leading-none">URL</span>
         </ToolbarButton>
 
         <div className="w-px h-5 bg-gray-600 mx-1" />

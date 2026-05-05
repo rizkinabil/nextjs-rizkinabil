@@ -261,7 +261,7 @@ export type BlogPostData = Tables['blog_posts']['Row'];
 export type BlogPostInput = Tables['blog_posts']['Insert'];
 
 export async function getBlogPosts(): Promise<BlogPostData[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('blog_posts')
     .select('*')
     .order('created_at', { ascending: false });
@@ -297,6 +297,21 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostData | nu
   if (error) {
     if (error.code === 'PGRST116') return null;
     console.error('Error fetching blog post:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function getBlogPostById(id: string): Promise<BlogPostData | null> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null;
+    console.error('Error fetching blog post by id:', error);
     throw error;
   }
   return data;

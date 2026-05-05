@@ -1,4 +1,4 @@
-import { deleteBlogPost, getBlogPostBySlug, updateBlogPost } from '@/lib/database-service';
+import { deleteBlogPost, getBlogPostById, updateBlogPost } from '@/lib/database-service';
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -8,7 +8,7 @@ interface Params {
 
 export async function GET(_request: NextRequest, { params }: Params) {
   try {
-    const post = await getBlogPostBySlug(params.id);
+    const post = await getBlogPostById(params.id);
     if (!post) return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     return NextResponse.json(post);
   } catch (error) {
