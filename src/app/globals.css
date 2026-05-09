@@ -149,3 +149,20 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Syntax highlighting (github-dark) ───────────────────────────────────────
+   Placed after @tailwind utilities so these rules win over prose-emerald's
+   pre-code color cascade. Class selectors here beat the :where() prose rules. */
+.hljs { color: #e6edf3; background: transparent; }
+.hljs-comment, .hljs-quote { color: #8b949e; font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-addition { color: #ff7b72; }
+.hljs-number, .hljs-literal, .hljs-deletion { color: #79c0ff; }
+.hljs-string, .hljs-doctag, .hljs-regexp { color: #a5d6ff; }
+.hljs-title, .hljs-section, .hljs-built_in { color: #d2a8ff; }
+.hljs-type, .hljs-class .hljs-title { color: #ffa657; }
+.hljs-tag, .hljs-name, .hljs-attribute { color: #7ee787; }
+.hljs-variable, .hljs-template-variable, .hljs-attr { color: #79c0ff; }
+.hljs-meta, .hljs-subst, .hljs-symbol, .hljs-bullet { color: #e6edf3; }
+.hljs-link { color: #a5d6ff; text-decoration: underline; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: bold; }
