@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   const context = await buildPortfolioContext();
 
   const result = streamText({
-    model: anthropic('claude-haiku-4.5'),
+    model: anthropic('claude-haiku-4-5'),
     system: `You are a friendly assistant on Rizki Nabil Aufa's personal portfolio website.
 Answer visitor questions about Rizki based solely on the information below.
 Be concise, conversational, and helpful.

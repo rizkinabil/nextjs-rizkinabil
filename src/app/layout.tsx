@@ -3,7 +3,7 @@ import { Calistoga, Inter } from 'next/font/google';
 import Script from 'next/script';
 
 import { twMerge } from 'tailwind-merge';
-import ChatWidget from '@/components/ChatWidget';
+import CommandPalette from '@/components/CommandPalette';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -105,7 +105,7 @@ export default function RootLayout({
       </head>
       <body className={twMerge(inter.variable, calistoga.variable, 'bg-gray-900 text-white antialiased font-sans')}>
         {children}
-        <ChatWidget />
+        <CommandPalette />
         {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
           <Script
             async
