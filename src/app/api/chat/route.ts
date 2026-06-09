@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 const anthropic = createAnthropic({
-  apiKey: 'placeholder', // H-Chat uses Authorization header, not x-api-key
+  apiKey: 'placeholder',
   baseURL: process.env.ANTHROPIC_BASE_URL,
   headers: {
     Authorization: `Bearer ${process.env.ANTHROPIC_AUTH_TOKEN}`,
@@ -14,22 +14,30 @@ const anthropic = createAnthropic({
 });
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  try {
+    const { messages } = await req.json();
 
-  const context = await buildPortfolioContext();
+    const context = await buildPortfolioContext();
 
-  const result = streamText({
-    model: anthropic('claude-haiku-4-5'),
-    system: `You are a friendly assistant on Rizki Nabil Aufa's personal portfolio website.
+    const result = streamText({
+      model: anthropic('claude-haiku-4-5'),
+      system: `You are a friendly assistant on Rizki Nabil Aufa's personal portfolio website.
 Answer visitor questions about Rizki based solely on the information below.
 Be concise, conversational, and helpful.
 If something isn't covered in the data, say you don't have that info and suggest contacting Rizki directly.
 Never make up information.
 
 ${context}`,
-    messages: await convertToModelMessages(messages),
-    maxOutputTokens: 512,
-  });
+      messages: await convertToModelMessages(messages),
+      maxOutputTokens: 512,
+    });
 
-  return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse();
+  } catch (err) {
+    console.error('[chat/route] error:', err);
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }
