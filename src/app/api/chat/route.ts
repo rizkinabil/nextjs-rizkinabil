@@ -28,7 +28,7 @@ Never make up information.
 
 ${context}`,
     messages: await convertToModelMessages(messages),
-    maxTokens: 512,
+    maxOutputTokens: 512,
   });
 
   return result.toUIMessageStreamResponse();
