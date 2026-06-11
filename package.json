@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.81",
+    "@ai-sdk/google": "^3.0.80",
     "@ai-sdk/react": "^3.0.196",
     "@giscus/react": "^3.1.0",
     "@prisma/client": "^6.18.0",
