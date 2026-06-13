@@ -14,7 +14,7 @@ function getModel(): LanguageModel {
 
   if (provider === 'anthropic') {
     const anthropic = createAnthropic({
-      apiKey: 'placeholder', // H-Chat uses Authorization header, not x-api-key
+      apiKey: 'placeholder',
       baseURL: process.env.ANTHROPIC_BASE_URL,
       headers: {
         Authorization: `Bearer ${process.env.ANTHROPIC_AUTH_TOKEN}`,
@@ -27,7 +27,7 @@ function getModel(): LanguageModel {
   const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   });
-  return google('gemini-2.0-flash');
+  return google('gemini-1.5-flash');
 }
 
 // --- Route handler ---
