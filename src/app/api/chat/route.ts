@@ -27,7 +27,7 @@ function getModel(): LanguageModel {
   const google = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   });
-  return google('gemini-1.5-flash');
+  return google('gemini-2.0-flash');
 }
 
 // --- Route handler ---
