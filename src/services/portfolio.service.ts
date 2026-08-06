@@ -1,13 +1,13 @@
 import { apiClient } from '@/lib/api-client';
-import type { Profile, Testimonial, Project, Experience, ToolboxItem, Highlight } from '@/types/frontend.types';
 import type {
-  ProfileData,
-  TestimonialData,
-  ProjectData,
   ExperienceData,
-  ToolboxData,
   HighlightData,
+  ProfileData,
+  ProjectData,
+  TestimonialData,
+  ToolboxData,
 } from '@/lib/database-service';
+import type { Experience, Highlight, Profile, Project, Testimonial, ToolboxItem } from '@/types/frontend.types';
 
 // Data transformation utilities
 class PortfolioTransformer {
@@ -32,6 +32,7 @@ class PortfolioTransformer {
       text: data.text,
       source: data.source || undefined,
       avatar: data.avatar,
+      type: data.type,
     };
   }
 
