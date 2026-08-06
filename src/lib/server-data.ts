@@ -1,4 +1,4 @@
-import { getFeaturedProjects, getTestimonials } from '@/lib/database-service';
+import { getFeaturedProjects, getTestimonialsByType } from '@/lib/database-service';
 import type { Project, Testimonial } from '@/types/frontend.types';
 import type { ProjectData, TestimonialData } from '@/lib/database-service';
 
@@ -27,6 +27,7 @@ function transformTestimonial(data: TestimonialData): Testimonial {
     text: data.text,
     source: data.source || undefined,
     avatar: data.avatar,
+    type: data.type,
   };
 }
 
@@ -35,7 +36,9 @@ export async function getFeaturedProjectsServer(): Promise<Project[]> {
   return data.map(transformProject);
 }
 
-export async function getTestimonialsServer(): Promise<Testimonial[]> {
-  const data = await getTestimonials();
+export async function getTestimonialsByTypeServer(
+  type: 'linkedin' | 'guestbook'
+): Promise<Testimonial[]> {
+  const data = await getTestimonialsByType(type);
   return data.map(transformTestimonial);
 }

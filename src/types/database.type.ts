@@ -53,6 +53,9 @@ export interface Database {
           source: string | null;
           is_active: boolean;
           sort_order: number;
+          type: 'linkedin' | 'guestbook';
+          status: 'approved' | 'pending' | 'rejected';
+          email: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -65,6 +68,9 @@ export interface Database {
           source?: string | null;
           is_active?: boolean;
           sort_order?: number;
+          type?: 'linkedin' | 'guestbook';
+          status?: 'approved' | 'pending' | 'rejected';
+          email?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -77,6 +83,9 @@ export interface Database {
           source?: string | null;
           is_active?: boolean;
           sort_order?: number;
+          type?: 'linkedin' | 'guestbook';
+          status?: 'approved' | 'pending' | 'rejected';
+          email?: string | null;
           created_at?: string;
           updated_at?: string;
         };

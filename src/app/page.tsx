@@ -27,20 +27,22 @@ function ProjectsSkeleton() {
 
 function TestimonialsSkeleton() {
   return (
-    <div className="py-16 lg:py-24">
-      <div className="mx-5 animate-pulse">
-        <div className="flex flex-col items-center gap-4 mb-16">
-          <div className="h-4 w-32 bg-white/10 rounded-full" />
-          <div className="h-8 w-72 bg-white/10 rounded-lg" />
-          <div className="h-4 w-80 bg-white/5 rounded-full" />
+    <section className="relative py-16 lg:py-24" id="testimonials">
+      <div className="container animate-pulse">
+        <div className="flex flex-col items-center gap-4 mb-10">
+          <div className="h-3 w-28 bg-white/10 rounded-full" />
+          <div className="h-8 w-64 bg-white/10 rounded-lg" />
+          <div className="h-4 w-72 bg-white/5 rounded-full" />
         </div>
-        <div className="flex gap-8 overflow-hidden">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="flex-shrink-0 w-80 md:w-96 h-52 rounded-3xl bg-white/5" />
-          ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-10">
+          <div className="lg:col-span-2 h-[240px] rounded-2xl bg-white/5" />
+          <div className="flex flex-col gap-3">
+            <div className="h-[100px] rounded-2xl bg-white/5" />
+            <div className="h-[120px] rounded-2xl bg-white/5" />
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

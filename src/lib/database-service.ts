@@ -38,6 +38,70 @@ export async function getTestimonials(): Promise<TestimonialData[]> {
   return data || [];
 }
 
+export async function getTestimonialsByType(
+  type: 'linkedin' | 'guestbook',
+  status: 'approved' | 'pending' | 'rejected' = 'approved'
+): Promise<TestimonialData[]> {
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('is_active', true)
+    .eq('type', type)
+    .eq('status', status)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching testimonials by type:', error);
+    throw error;
+  }
+  return data || [];
+}
+
+export async function getPendingGuestbook(): Promise<TestimonialData[]> {
+  const { data, error } = await supabaseAdmin
+    .from('testimonials')
+    .select('*')
+    .eq('type', 'guestbook')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching pending guestbook:', error);
+    throw error;
+  }
+  return data || [];
+}
+
+export async function getPendingGuestbookCount(): Promise<number> {
+  const { count, error } = await supabaseAdmin
+    .from('testimonials')
+    .select('*', { count: 'exact', head: true })
+    .eq('type', 'guestbook')
+    .eq('status', 'pending');
+
+  if (error) {
+    console.error('Error fetching pending count:', error);
+    return 0;
+  }
+  return count ?? 0;
+}
+
+export async function updateTestimonialStatus(
+  id: string,
+  status: 'approved' | 'rejected'
+): Promise<void> {
+  const updates: Tables['testimonials']['Update'] = { status };
+  if (status === 'rejected') updates.is_active = false;
+
+  const { error } = await supabaseAdmin.from('testimonials').update(updates).eq('id', id);
+
+  if (error) {
+    console.error('Error updating testimonial status:', error);
+    throw error;
+  }
+}
+
 export async function createTestimonial(testimonial: TestimonialInput): Promise<TestimonialData> {
   const { data, error } = await supabaseAdmin.from('testimonials').insert(testimonial).select().single();
 
