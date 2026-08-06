@@ -14,7 +14,7 @@ function getModel(): LanguageModel {
 
   if (provider === 'anthropic') {
     const anthropic = createAnthropic({
-      apiKey: 'placeholder', // H-Chat uses Authorization header, not x-api-key
+      apiKey: 'placeholder',
       baseURL: process.env.ANTHROPIC_BASE_URL,
       headers: {
         Authorization: `Bearer ${process.env.ANTHROPIC_AUTH_TOKEN}`,

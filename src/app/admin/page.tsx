@@ -134,6 +134,13 @@ export default function AdminDashboard() {
                 <span className="text-white text-sm font-medium">Manage blog posts</span>
                 <span className="text-white/40">→</span>
               </Link>
+              <Link
+                href="/admin/guestbook"
+                className="flex items-center justify-between p-3 rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors"
+              >
+                <span className="text-white text-sm font-medium">Review guest book submissions</span>
+                <span className="text-white/40">→</span>
+              </Link>
             </div>
           </div>
         </div>

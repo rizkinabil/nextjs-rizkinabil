@@ -17,6 +17,7 @@ export interface Testimonial {
   text: string;
   source?: string;
   avatar: string;
+  type: 'linkedin' | 'guestbook';
 }
 
 export interface Project {

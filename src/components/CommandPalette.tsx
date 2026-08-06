@@ -4,6 +4,8 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  ArrowLeft,
+  ArrowUp,
   ArrowUpRight,
   BookOpen,
   Briefcase,
@@ -435,7 +437,14 @@ export default function CommandPalette() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const text = query.trim();
-    if (!text || text.startsWith('/')) return;
+    if (!text) return;
+    if (text.startsWith('/')) {
+      const filtered = COMMANDS.filter(
+        (c) => c.shortcut.includes(text.toLowerCase()) || c.label.toLowerCase().includes(text.toLowerCase())
+      );
+      if (filtered.length === 1) selectCommand(filtered[0].id);
+      return;
+    }
     track('command-palette-ai-ask');
     sendMessage({ text });
     setMode('ai');
@@ -499,7 +508,7 @@ export default function CommandPalette() {
                     onClick={() => { setMode('idle'); setQuery(''); }}
                     className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg px-2 py-1 hover:bg-emerald-400/20 transition-colors shrink-0 whitespace-nowrap"
                   >
-                    ← {activeCommand.label}
+                    <ArrowLeft className="w-3 h-3" /> {activeCommand.label}
                   </button>
                 ) : mode === 'ai' ? (
                   <button
@@ -507,7 +516,7 @@ export default function CommandPalette() {
                     onClick={() => { setMode('idle'); setQuery(''); }}
                     className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg px-2 py-1 hover:bg-emerald-400/20 transition-colors shrink-0"
                   >
-                    ← AI
+                    <ArrowLeft className="w-3 h-3" /> AI
                   </button>
                 ) : (
                   <Search className="w-4 h-4 text-white/25 shrink-0" />
@@ -528,6 +537,17 @@ export default function CommandPalette() {
                     className="text-white/25 hover:text-white/50 transition-colors shrink-0"
                   >
                     <X className="w-4 h-4" />
+                  </button>
+                )}
+
+                {query && !query.trim().startsWith('/') && (
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    aria-label="Send message"
+                    className="shrink-0 flex items-center justify-center w-6 h-6 rounded-md bg-emerald-400/20 text-emerald-400 hover:bg-emerald-400/30 transition-colors disabled:opacity-40"
+                  >
+                    <ArrowUp className="w-3.5 h-3.5" />
                   </button>
                 )}
 
