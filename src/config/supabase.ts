@@ -31,5 +31,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, sup
 export const supabaseAdmin = createClient<Database>(
   supabaseUrl,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  supabaseOptions
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  }
 );
