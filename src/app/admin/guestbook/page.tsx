@@ -1,6 +1,8 @@
 import { getPendingGuestbook } from '@/lib/database-service';
 import { GuestbookList } from './GuestbookActions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function GuestbookModerationPage() {
   const pending = await getPendingGuestbook();
 
